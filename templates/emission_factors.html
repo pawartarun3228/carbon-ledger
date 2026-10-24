@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}Emission Factor Registry &mdash; Carbon Ledger{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="page-header-editorial">
+        <span class="page-category-label">Standards &amp; Traceability</span>
+        <h1 class="page-title-editorial">Emission Factor Registry</h1>
+        <p class="page-lead-editorial">
+            Transparent catalog of conversion coefficients used across Scope 1 direct fuels, Scope 2 grid electricity, and Scope 3 mobility.
+        </p>
+    </div>
+
+    <!-- Methodology Disclosure Banner -->
+    <div class="audit-alert alert-info mb-4">
+        <div class="d-flex align-items-center">
+            <i class="fa-solid fa-circle-info text-primary me-3 fa-lg"></i>
+            <div>
+                <div class="audit-alert-title">Academic &amp; Benchmark Traceability Notice</div>
+                <div class="audit-alert-body">
+                    All conversion factors in this prototype are grounded in documented public standards. 
+                    Grid electricity is referenced to the <strong>Central Electricity Authority (CEA) CO₂ Baseline Database for the Indian Power Sector (v19)</strong> combined margin baseline. 
+                    Stationary and mobile liquid fuels follow <strong>IPCC 2006 Guidelines (Vol 2, Energy)</strong>. 
+                    Commuter and rail passenger transport benchmarks follow <strong>UK DEFRA / DESNZ 2023</strong> conversion coefficients. 
+                    These factors are provided for software demonstration and educational testing.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Factor Registry Table -->
+    <div class="card-institutional">
+        <div class="card-institutional-header d-flex justify-content-between align-items-center">
+            <h2 class="card-institutional-title h6 mb-0">Active Factor Inventory</h2>
+            <span class="badge bg-light text-dark border">{{ factors|length }} Active Factors</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-institutional mb-0" aria-label="Emission Factors Registry">
+                <thead>
+                    <tr>
+                        <th scope="col">Scope</th>
+                        <th scope="col">Category</th>
+                        <th scope="col" class="numeric-cell">Factor Value</th>
+                        <th scope="col">Factor Unit</th>
+                        <th scope="col">Region &amp; Year</th>
+                        <th scope="col">Standard / Reference Source</th>
+                        <th scope="col">Version / Status</th>
+                        <th scope="col">Boundary Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, info in factors.items() %}
+                    <tr>
+                        <td>
+                            {% if info.scope == 'Scope 2' %}
+                                <span class="badge-scope badge-scope-2">Scope 2</span>
+                            {% elif info.scope == 'Scope 1' %}
+                                <span class="badge-scope badge-scope-1">Scope 1</span>
+                            {% else %}
+                                <span class="badge-scope badge-scope-3">Scope 3</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <strong>{{ info.name }}</strong>
+                            <div class="font-monospace small text-muted">{{ key }}</div>
+                        </td>
+                        <td class="numeric-cell font-monospace fw-bold">{{ info.factor }}</td>
+                        <td class="small">{{ info.factor_unit }}</td>
+                        <td class="small">{{ info.region }} ({{ info.year }})</td>
+                        <td class="small" style="max-width: 240px;">
+                            {{ info.source }}
+                            {% if info.source_url %}
+                                <a href="{{ info.source_url }}" target="_blank" rel="noopener noreferrer" class="d-block small text-primary text-truncate" title="{{ info.source_url }}">
+                                    <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Reference Link
+                                </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge bg-success-subtle text-success border border-success-subtle">{{ info.status }}</span>
+                            <div class="small text-muted">{{ info.version }}</div>
+                        </td>
+                        <td class="small text-muted" style="max-width: 260px;">
+                            {{ info.notes }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

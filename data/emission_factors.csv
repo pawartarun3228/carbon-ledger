@@ -1,0 +1,9 @@
+category,name,factor,unit,factor_unit,scope,source,region,year,version,status
+electricity,Grid Electricity (Indian National Grid Average),0.716,kWh,kg CO2e/kWh,Scope 2,CEA CO2 Baseline Database for Indian Power Sector v19 Table 1,India,FY 2022-23,v19.0,Active
+petrol,Motor Gasoline / Petrol,2.31,litre,kg CO2e/litre,Scope 1,IPCC 2006 Guidelines Vol 2 Ch 3,Global default,2006,IPCC 2006,Active
+diesel,Gas / Diesel Oil,2.68,litre,kg CO2e/litre,Scope 1,IPCC 2006 Guidelines Vol 2 Ch 3,Global default,2006,IPCC 2006,Active
+transport_car_petrol,Passenger Car (Petrol, Vehicle-km),0.192,vehicle-km,kg CO2e/vehicle-km,Scope 3,UK DEFRA / DESNZ GHG Conversion Factors,UK/Global,2023,DEFRA 2023,Active
+transport_car_diesel,Passenger Car (Diesel, Vehicle-km),0.171,vehicle-km,kg CO2e/vehicle-km,Scope 3,UK DEFRA / DESNZ GHG Conversion Factors,UK/Global,2023,DEFRA 2023,Active
+transport_bus,Public Transit Bus (Passenger-km),0.089,passenger-km,kg CO2e/passenger-km,Scope 3,UK DEFRA / DESNZ GHG Conversion Factors,UK/Global,2023,DEFRA 2023,Active
+transport_train,Rail Transit / Train (Passenger-km),0.041,passenger-km,kg CO2e/passenger-km,Scope 3,UK DEFRA / DESNZ GHG Conversion Factors,UK/Global,2023,DEFRA 2023,Active
+transport_motorcycle,Motorcycle / Two-Wheeler (Vehicle-km),0.113,vehicle-km,kg CO2e/vehicle-km,Scope 3,UK DEFRA / DESNZ GHG Conversion Factors,UK/Global,2023,DEFRA 2023,Active

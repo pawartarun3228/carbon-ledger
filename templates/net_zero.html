@@ -1,0 +1,492 @@
+{% extends 'base.html' %}
+
+{% block title %}Net-Zero Pathways &amp; Scenario Simulator &mdash; Carbon Ledger{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="page-header-editorial">
+        <span class="page-category-label">Target Governance &amp; Simulation</span>
+        <h1 class="page-title-editorial">Net-Zero Pathways &amp; Scenario Simulator</h1>
+        <p class="page-lead-editorial">
+            Define institutional carbon reduction targets, simulate activity-level abatement levers, and compare multi-year glide-path trajectories.
+        </p>
+    </div>
+
+    <!-- Target Definition & Status Row -->
+    <div class="row g-4 mb-4">
+        <!-- Target Setting Form -->
+        <div class="col-lg-5">
+            <div class="card-institutional h-100">
+                <div class="card-institutional-header">
+                    <h2 class="card-institutional-title h6 mb-0">Set Institutional Target</h2>
+                    {% if has_plan %}
+                        <span class="badge bg-success">Active Target Declared</span>
+                    {% else %}
+                        <span class="badge bg-warning text-dark">No Target Configured</span>
+                    {% endif %}
+                </div>
+                <div class="card-institutional-body p-4">
+                    <form method="POST" action="/net-zero">
+                        <input type="hidden" name="action" value="set_target">
+                        <div class="mb-3">
+                            <label for="baseline-input" class="form-institutional-label">Baseline Annual Emissions (kg CO₂e)</label>
+                            <input type="number" step="any" min="1" id="baseline-input" name="baseline" 
+                                   value="{{ target.baseline_emission if has_plan else (current_emission if current_emission > 0 else 1000) }}" 
+                                   class="form-institutional-control" required>
+                            <div class="form-text small">Historical reporting baseline to benchmark reduction against.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="target-pct-input" class="form-institutional-label">Target Reduction Percentage (%)</label>
+                            <input type="number" step="1" min="1" max="100" id="target-pct-input" name="target_pct" 
+                                   value="{{ target.target_reduction_percentage if has_plan else 50 }}" 
+                                   class="form-institutional-control" required>
+                            <div class="form-text small">Enter 50 for 50% reduction, or 100 for absolute Net-Zero.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="target-year-input" class="form-institutional-label">Target Year</label>
+                            <input type="number" min="2027" max="2070" id="target-year-input" name="target_year" 
+                                   value="{{ target.target_year if has_plan else 2030 }}" 
+                                   class="form-institutional-control" required>
+                            <div class="form-text small">Future target year (aligned with 2030 or 2050 commitments).</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-un-primary w-100 mt-2">
+                            <i class="fa-solid fa-bullseye me-1"></i> Save Target Parameters
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Target Metrics Summary -->
+        <div class="col-lg-7">
+            <div class="card-institutional h-100">
+                <div class="card-institutional-header">
+                    <h2 class="card-institutional-title h6 mb-0">Decarbonization Target Architecture</h2>
+                    <span class="badge bg-light text-dark border">Governance Blueprint</span>
+                </div>
+                <div class="card-institutional-body p-4 d-flex flex-column justify-content-between">
+                    {% if has_plan and plan %}
+                        <div class="row g-3 text-center mb-3">
+                            <div class="col-sm-4">
+                                <div class="p-3 bg-light rounded border">
+                                    <span class="small text-muted d-block">Baseline Emissions</span>
+                                    <strong class="h5 text-navy font-monospace">{{ "{:,.1f}".format(plan.baseline) }}</strong>
+                                    <div class="small text-muted">kg CO₂e</div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="p-3 bg-light rounded border">
+                                    <span class="small text-muted d-block">Target Allowance</span>
+                                    <strong class="h5 text-primary font-monospace">{{ "{:,.1f}".format(plan.target_emission) }}</strong>
+                                    <div class="small text-muted">kg CO₂e ({{ plan.target_year }})</div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="p-3 bg-light rounded border">
+                                    <span class="small text-muted d-block">Required Abatement</span>
+                                    <strong class="h5 text-danger font-monospace">{{ "{:,.1f}".format(plan.required_reduction) }}</strong>
+                                    <div class="small text-muted">kg CO₂e ({{ plan.target_reduction_pct }}%)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between small text-muted mb-1">
+                                <span>Progress Toward Reduction Commitment</span>
+                                <strong>{{ plan.progress_pct if plan.progress_pct is not none else 0 }}%</strong>
+                            </div>
+                            <div class="progress" style="height: 10px;">
+                                <div class="progress-bar bg-primary" style="width: {{ plan.progress_pct or 0 }}%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-light rounded border">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="small fw-bold text-navy">Annual Abatement Rate Required:</div>
+                                    <div class="small text-muted">{{ "{:,.1f}".format(plan.annual_reduction_needed) }} kg CO₂e / year over {{ plan.years_remaining }} year(s)</div>
+                                </div>
+                                <span class="badge {% if plan.on_track %}bg-success{% else %}bg-warning text-dark{% endif %} p-2">
+                                    {{ "ON SCHEDULE" if plan.on_track else "ACCELERATION NEEDED" }}
+                                </span>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5 text-muted">
+                            <i class="fa-solid fa-flag-checkered fa-3x mb-3 text-secondary opacity-50"></i>
+                            <p>No net-zero target declared yet. Fill out the target form to compute your annual abatement pathway.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Activity-Based Scenario Simulator -->
+    <div class="card-institutional mb-4">
+        <div class="card-institutional-header">
+            <h2 class="card-institutional-title h6 mb-0">
+                <i class="fa-solid fa-sliders me-2 text-primary"></i> Interactive Decarbonization Scenario Simulator
+            </h2>
+            <span class="badge bg-light text-dark border">Activity-Level Recalculation</span>
+        </div>
+        <div class="card-institutional-body p-4">
+            <!-- Hidden inputs for baseline category shares -->
+            <input type="hidden" id="base-elec-val" value="{{ base_dict.electricity }}">
+            <input type="hidden" id="base-fuel-val" value="{{ base_dict.fuel }}">
+            <input type="hidden" id="base-trans-val" value="{{ base_dict.transportation }}">
+            <input type="hidden" id="base-other-val" value="{{ base_dict.other }}">
+            <input type="hidden" id="sim-target-pct" value="{{ target.target_reduction_percentage if has_plan else 50 }}">
+            <input type="hidden" id="sim-target-year" value="{{ target.target_year if has_plan else 2030 }}">
+
+            <div class="row g-4 align-items-center">
+                <!-- Sliders Column -->
+                <div class="col-lg-6 border-end pe-lg-4">
+                    <h3 class="h6 fw-bold text-navy mb-3">Adjust Specific Abatement Levers:</h3>
+                    
+                    <!-- Electricity Slider -->
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between small fw-bold mb-1">
+                            <span>Electricity Conservation &amp; Solar PV:</span>
+                            <span id="sim-elec-display" class="text-primary font-monospace">20%</span>
+                        </div>
+                        <input type="range" class="form-range" id="sim-elec-slider" min="0" max="100" value="20" step="5">
+                        <div class="d-flex justify-content-between small text-muted">
+                            <span>0% (Status Quo)</span>
+                            <span>Baseline: {{ "{:,.0f}".format(base_dict.electricity) }} kg</span>
+                            <span>100% (100% RE)</span>
+                        </div>
+                    </div>
+
+                    <!-- Fuel Slider -->
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between small fw-bold mb-1">
+                            <span>Direct Fuel Optimization &amp; Fleet Tuning:</span>
+                            <span id="sim-fuel-display" class="text-primary font-monospace">15%</span>
+                        </div>
+                        <input type="range" class="form-range" id="sim-fuel-slider" min="0" max="100" value="15" step="5">
+                        <div class="d-flex justify-content-between small text-muted">
+                            <span>0% (Status Quo)</span>
+                            <span>Baseline: {{ "{:,.0f}".format(base_dict.fuel) }} kg</span>
+                            <span>100% (Full Zero-Carbon)</span>
+                        </div>
+                    </div>
+
+                    <!-- Transport Slider -->
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between small fw-bold mb-1">
+                            <span>Transit Modal Shift &amp; Telecommuting:</span>
+                            <span id="sim-trans-display" class="text-primary font-monospace">15%</span>
+                        </div>
+                        <input type="range" class="form-range" id="sim-trans-slider" min="0" max="100" value="15" step="5">
+                        <div class="d-flex justify-content-between small text-muted">
+                            <span>0% (Status Quo)</span>
+                            <span>Baseline: {{ "{:,.0f}".format(base_dict.transportation) }} kg</span>
+                            <span>100% (Zero Commute)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Recalculation Results Column -->
+                <div class="col-lg-6 ps-lg-4">
+                    <div class="p-3 bg-light rounded border mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small fw-bold text-uppercase text-muted">Simulated Inventory Emissions:</span>
+                            <span id="scenario-status-badge" class="badge bg-warning text-dark">GAP TO TARGET</span>
+                        </div>
+                        <div class="h3 fw-bold text-navy mb-0 font-monospace" id="scenario-result-co2e">
+                            {{ "{:,.1f}".format(simulation.scenario_total_kg) }} kg
+                        </div>
+                        <div class="small text-muted" id="scenario-result-tonnes">
+                            ({{ simulation.scenario_total_t }} metric tonnes CO₂e)
+                        </div>
+                    </div>
+
+                    <div class="row g-2 text-center mb-3">
+                        <div class="col-6">
+                            <div class="p-2 border rounded bg-white">
+                                <span class="small text-muted d-block">Estimated Annual Abatement:</span>
+                                <strong class="text-success font-monospace" id="scenario-savings-val">
+                                    {{ "{:,.1f}".format(simulation.savings_kg) }} kg ({{ simulation.savings_pct }}%)
+                                </strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 border rounded bg-white">
+                                <span class="small text-muted d-block">Remaining Target Gap:</span>
+                                <strong class="text-danger font-monospace" id="scenario-gap-val">
+                                    {{ "{:,.1f}".format(simulation.remaining_gap_kg) }} kg
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Save Scenario Form -->
+                    <form method="POST" action="/net-zero" class="mt-3">
+                        <input type="hidden" name="action" value="save_scenario">
+                        <input type="hidden" name="sim_electricity" id="save-sim-elec" value="20">
+                        <input type="hidden" name="sim_fuel" id="save-sim-fuel" value="15">
+                        <input type="hidden" name="sim_transport" id="save-sim-trans" value="15">
+                        <input type="hidden" name="sim_baseline" value="{{ simulation.baseline_total_kg }}">
+                        <input type="hidden" name="scenario_target_year" value="{{ target.target_year if has_plan else 2030 }}">
+                        
+                        <div class="input-group input-group-sm mb-2">
+                            <input type="text" name="scenario_name" class="form-control" placeholder="Scenario name (e.g. Aggressive Rooftop Solar)" required>
+                            <button type="submit" class="btn btn-un-primary">
+                                <i class="fa-solid fa-bookmark me-1"></i> Save Scenario
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Annual Glide-Path Trajectory Chart -->
+    <div class="card-institutional mb-4">
+        <div class="card-institutional-header">
+            <h2 class="card-institutional-title h6 mb-0">Decarbonization Trajectory (Benchmark vs Simulated Glide Path)</h2>
+            <span class="badge bg-light text-dark border">Trajectory Projection</span>
+        </div>
+        <div class="card-institutional-body">
+            <div class="chart-box" style="height: 320px;">
+                <canvas id="trajectoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Saved Scenarios Comparison Table -->
+    {% if saved_scenarios %}
+    <div class="card-institutional mb-4">
+        <div class="card-institutional-header d-flex justify-content-between align-items-center">
+            <h2 class="card-institutional-title h6 mb-0">Saved Decarbonization Scenarios</h2>
+            <span class="badge bg-light text-dark border">{{ saved_scenarios|length }} Saved</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-institutional mb-0" aria-label="Saved Scenarios">
+                <thead>
+                    <tr>
+                        <th scope="col">Scenario Name</th>
+                        <th scope="col">Target Year</th>
+                        <th scope="col" class="numeric-cell">Electricity Abatement</th>
+                        <th scope="col" class="numeric-cell">Fuel Abatement</th>
+                        <th scope="col" class="numeric-cell">Transport Shift</th>
+                        <th scope="col" class="numeric-cell">Projected Emissions</th>
+                        <th scope="col" class="numeric-cell">Annual Savings</th>
+                        <th scope="col" class="numeric-cell">Target Gap</th>
+                        <th scope="col" class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sc in saved_scenarios %}
+                    <tr>
+                        <td><strong>{{ sc.name }}</strong></td>
+                        <td>{{ sc.target_year }}</td>
+                        <td class="numeric-cell font-monospace">{{ sc.electricity_reduction_pct }}%</td>
+                        <td class="numeric-cell font-monospace">{{ sc.fuel_reduction_pct }}%</td>
+                        <td class="numeric-cell font-monospace">{{ sc.transport_reduction_pct }}%</td>
+                        <td class="numeric-cell font-monospace fw-bold">{{ "{:,.1f}".format(sc.scenario_co2e) }} kg</td>
+                        <td class="numeric-cell font-monospace text-success">{{ "{:,.1f}".format(sc.annual_savings_co2e) }} kg</td>
+                        <td class="numeric-cell font-monospace {% if sc.target_gap_co2e > 0 %}text-danger{% else %}text-success{% endif %}">
+                            {{ "{:,.1f}".format(sc.target_gap_co2e) }} kg
+                        </td>
+                        <td class="text-center">
+                            <form action="/delete-scenario/{{ sc.id }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this saved scenario?');">
+                                <button type="submit" class="btn btn-outline-danger btn-sm p-1">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- 5-Phase Net-Zero Roadmap -->
+    {% if has_plan and plan and plan.phases %}
+    <div class="card-institutional">
+        <div class="card-institutional-header">
+            <h2 class="card-institutional-title h6 mb-0">5-Phase Decarbonization Implementation Roadmap</h2>
+            <span class="badge bg-light text-dark border">Phased Execution Plan</span>
+        </div>
+        <div class="card-institutional-body p-4">
+            <div class="row g-3">
+                {% for phase in plan.phases %}
+                <div class="col-md-4 col-sm-6">
+                    <div class="p-3 bg-light rounded border h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge bg-primary text-white">Phase {{ phase.phase }}</span>
+                            <span class="small text-muted font-monospace">{{ phase.timeline }}</span>
+                        </div>
+                        <h3 class="h6 fw-bold text-navy mb-2">{{ phase.title }}</h3>
+                        <p class="small text-muted mb-2">{{ phase.description }}</p>
+                        <ul class="small ps-3 mb-0 text-secondary">
+                            {% for act in phase.actions %}
+                            <li>{{ act }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const trajectoryData = {{ simulation.trajectory | tojson }};
+    const years = trajectoryData.map(d => d.year);
+    const benchmarks = trajectoryData.map(d => d.target_allowance_kg);
+    const simulated = trajectoryData.map(d => d.scenario_projected_kg);
+
+    const ctx = document.getElementById('trajectoryChart').getContext('2d');
+    const trajectoryChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: years,
+            datasets: [
+                {
+                    label: 'Policy Benchmark Allowance (Linear Trajectory)',
+                    data: benchmarks,
+                    borderColor: '#004f98',
+                    borderDash: [5, 5],
+                    borderWidth: 2,
+                    pointRadius: 4,
+                    fill: false
+                },
+                {
+                    label: 'Simulated Scenario Glide Path',
+                    data: simulated,
+                    borderColor: '#0d9488',
+                    backgroundColor: 'rgba(13, 148, 136, 0.08)',
+                    borderWidth: 2.5,
+                    pointRadius: 4,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: '#f1f5f9' },
+                    ticks: {
+                        callback: val => val.toLocaleString() + ' kg'
+                    }
+                },
+                x: {
+                    grid: { display: false }
+                }
+            },
+            plugins: {
+                legend: { position: 'top', labels: { boxWidth: 14 } },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y.toLocaleString()} kg CO2e`
+                    }
+                }
+            }
+        }
+    });
+
+    // Interactive slider real-time recalculation
+    const eSlider = document.getElementById('sim-elec-slider');
+    const fSlider = document.getElementById('sim-fuel-slider');
+    const tSlider = document.getElementById('sim-trans-slider');
+
+    const eDisplay = document.getElementById('sim-elec-display');
+    const fDisplay = document.getElementById('sim-fuel-display');
+    const tDisplay = document.getElementById('sim-trans-display');
+
+    const eBase = parseFloat(document.getElementById('base-elec-val').value) || 0;
+    const fBase = parseFloat(document.getElementById('base-fuel-val').value) || 0;
+    const tBase = parseFloat(document.getElementById('base-trans-val').value) || 0;
+    const oBase = parseFloat(document.getElementById('base-other-val').value) || 0;
+    const totalBase = eBase + fBase + tBase + oBase;
+
+    const targetPct = parseFloat(document.getElementById('sim-target-pct').value) || 50;
+    const targetAllowance = totalBase * (1.0 - (targetPct / 100.0));
+
+    function updateSimulation() {
+        const eVal = parseFloat(eSlider.value);
+        const fVal = parseFloat(fSlider.value);
+        const tVal = parseFloat(tSlider.value);
+
+        if (eDisplay) eDisplay.textContent = eVal + '%';
+        if (fDisplay) fDisplay.textContent = fVal + '%';
+        if (tDisplay) tDisplay.textContent = tVal + '%';
+
+        // Update hidden form fields for scenario saving
+        const saveElec = document.getElementById('save-sim-elec');
+        const saveFuel = document.getElementById('save-sim-fuel');
+        const saveTrans = document.getElementById('save-sim-trans');
+        if (saveElec) saveElec.value = eVal;
+        if (saveFuel) saveFuel.value = fVal;
+        if (saveTrans) saveTrans.value = tVal;
+
+        // Calculate simulated outcome
+        const eSim = eBase * (1.0 - eVal / 100.0);
+        const fSim = fBase * (1.0 - fVal / 100.0);
+        const tSim = tBase * (1.0 - tVal / 100.0);
+        const totalSim = eSim + fSim + tSim + oBase;
+        const savings = totalBase - totalSim;
+        const savingsPct = totalBase > 0 ? (savings / totalBase * 100.0) : 0;
+        const gap = Math.max(0, totalSim - targetAllowance);
+
+        // Update KPIs
+        const resultCo2e = document.getElementById('scenario-result-co2e');
+        const resultTonnes = document.getElementById('scenario-result-tonnes');
+        const savingsVal = document.getElementById('scenario-savings-val');
+        const gapVal = document.getElementById('scenario-gap-val');
+        const statusBadge = document.getElementById('scenario-status-badge');
+
+        if (resultCo2e) resultCo2e.textContent = Math.round(totalSim).toLocaleString() + ' kg';
+        if (resultTonnes) resultTonnes.textContent = '(' + (totalSim / 1000).toFixed(3) + ' metric tonnes CO₂e)';
+        if (savingsVal) savingsVal.textContent = Math.round(savings).toLocaleString() + ' kg (' + savingsPct.toFixed(1) + '%)';
+        if (gapVal) gapVal.textContent = Math.round(gap).toLocaleString() + ' kg';
+
+        if (statusBadge) {
+            if (gap <= 0) {
+                statusBadge.className = 'badge bg-success';
+                statusBadge.textContent = 'TARGET ACHIEVED';
+            } else {
+                statusBadge.className = 'badge bg-warning text-dark';
+                statusBadge.textContent = 'GAP TO TARGET';
+            }
+        }
+
+        // Recalculate trajectory simulated path
+        const nYears = years.length;
+        if (nYears > 1) {
+            const newSimulated = [];
+            for (let step = 0; step < nYears; step++) {
+                const fraction = step / (nYears - 1);
+                const stepVal = Math.round(totalBase - (fraction * savings));
+                newSimulated.push(stepVal);
+            }
+            trajectoryChart.data.datasets[1].data = newSimulated;
+            trajectoryChart.update();
+        }
+    }
+
+    if (eSlider && fSlider && tSlider) {
+        eSlider.addEventListener('input', updateSimulation);
+        fSlider.addEventListener('input', updateSimulation);
+        tSlider.addEventListener('input', updateSimulation);
+    }
+});
+</script>
+{% endblock %}

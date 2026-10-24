@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+
+{% block title %}Carbon Ledger &mdash; Carbon Emission Monitoring and Net-Zero Recommendation Platform{% endblock %}
+
+{% block content %}
+<!-- Editorial Hero Section -->
+<section class="hero-editorial">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <span class="text-uppercase fw-bold text-info small letter-spacing-2 mb-2 d-block">
+                    University CSE / AIML Design Project Prototype
+                </span>
+                <h1 class="display-4 fw-bold">
+                    Institutional Carbon Accounting &amp; Decarbonization Intelligence
+                </h1>
+                <p class="lead">
+                    “Measure emissions. Understand impact. Plan a lower-carbon future.”
+                </p>
+                <p class="text-light opacity-75 mb-4">
+                    Carbon Ledger unites GHG Protocol corporate inventory standards, verifiable emission factor provenance, leak-free machine learning forecasting, and interactive net-zero trajectory modeling into a single defensible software platform.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="/dashboard" class="btn btn-un-primary btn-lg">
+                        <i class="fa-solid fa-chart-line"></i> Open Executive Dashboard
+                    </a>
+                    <a href="/forecasting" class="btn btn-un-secondary btn-lg">
+                        <i class="fa-solid fa-flask"></i> Explore Forecasting Lab
+                    </a>
+                    <a href="/methodology" class="btn btn-un-outline btn-lg text-white border-light">
+                        <i class="fa-solid fa-book"></i> Scientific Methodology
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 d-none d-lg-block">
+                <div class="hero-stats-strip">
+                    <div class="mb-3">
+                        <span class="text-uppercase text-secondary small fw-bold d-block">Active Inventory</span>
+                        <span class="h3 fw-bold text-white mb-0">{{ "{:,.1f}".format(total_emissions) }} kg CO₂e</span>
+                        <div class="text-info small">({{ total_tonnes }} metric tonnes)</div>
+                    </div>
+                    <hr class="border-secondary my-2">
+                    <div class="mb-3">
+                        <span class="text-uppercase text-secondary small fw-bold d-block">Activity Records Monitored</span>
+                        <span class="h4 fw-bold text-white mb-0">{{ record_count }} Records</span>
+                    </div>
+                    <hr class="border-secondary my-2">
+                    <div>
+                        <span class="text-uppercase text-secondary small fw-bold d-block">Traceable Factor Registry</span>
+                        <span class="h5 fw-bold text-white mb-0">{{ factor_count }} Documented Factors</span>
+                        <div class="text-secondary small">CEA India &bull; IPCC &bull; UK DEFRA</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Core Pillars Section -->
+<section class="py-5 bg-white border-bottom">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="page-category-label">System Architecture</span>
+            <h2 class="page-title-editorial">Four Methodological Pillars</h2>
+            <p class="text-muted mx-auto" style="max-width: 680px;">
+                Designed to bridge deterministic environmental accounting standards with rigorous machine learning and policy scenario simulation.
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Pillar 1 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card-institutional h-100 p-4">
+                    <div class="text-primary mb-3">
+                        <i class="fa-solid fa-scale-balanced fa-2x" style="color: var(--un-blue);"></i>
+                    </div>
+                    <h3 class="h5 fw-bold text-navy mb-2">1. Verifiable Accounting</h3>
+                    <p class="text-muted small mb-0">
+                        Rigorous E = Activity &times; Emission Factor computation with explicit unit compatibility. Preserves factor provenance, CEA national grid baselines, and IPCC fuel coefficients for reproducibility.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Pillar 2 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card-institutional h-100 p-4">
+                    <div class="text-primary mb-3">
+                        <i class="fa-solid fa-brain fa-2x" style="color: var(--teal-accent);"></i>
+                    </div>
+                    <h3 class="h5 fw-bold text-navy mb-2">2. ML Forecasting Lab</h3>
+                    <p class="text-muted small mb-0">
+                        Chronological holdout benchmarking comparing Naive persistence, Linear Regression, and Random Forest Regressors without future-data leakage.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Pillar 3 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card-institutional h-100 p-4">
+                    <div class="text-primary mb-3">
+                        <i class="fa-solid fa-lightbulb fa-2x" style="color: var(--amber-warning);"></i>
+                    </div>
+                    <h3 class="h5 fw-bold text-navy mb-2">3. Explainable Advisory</h3>
+                    <p class="text-muted small mb-0">
+                        Evidence-based decarbonization recommendations driven by verified emissions data. Includes causal rationales, abatement potential, and stated assumptions.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Pillar 4 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card-institutional h-100 p-4">
+                    <div class="text-primary mb-3">
+                        <i class="fa-solid fa-route fa-2x" style="color: var(--navy-primary);"></i>
+                    </div>
+                    <h3 class="h5 fw-bold text-navy mb-2">4. Net-Zero Pathways</h3>
+                    <p class="text-muted small mb-0">
+                        Interactive decarbonization scenario planner that recalculates emissions from activity interventions and projects annual glide-path trajectories to 2030–2050 targets.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Launchpad / Demonstration Options -->
+<section class="py-5" style="background-color: var(--light-bg);">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-7">
+                <span class="page-category-label">First Time Setup &amp; Evaluation</span>
+                <h2 class="page-title-editorial mb-3">Instant Demonstration or Custom Inventory</h2>
+                <p class="text-muted">
+                    Carbon Ledger is ready for evaluation immediately. You can test the platform using your own organizational activity data (via manual entry or CSV upload) or load a pre-configured 18-month demonstration dataset (Jan 2023 &ndash; Jun 2024, 72 records) representative of a university academic department facility covering Scopes 1, 2, and 3.
+                </p>
+                <div class="d-flex flex-wrap gap-2 mt-4">
+                    {% if not has_data %}
+                        <form action="/api/load-demo-data" method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-un-primary">
+                                <i class="fa-solid fa-database me-1"></i> Load Demonstration Dataset
+                            </button>
+                        </form>
+                    {% endif %}
+                    <a href="/add-data" class="btn btn-un-secondary">
+                        <i class="fa-solid fa-plus me-1"></i> Log Activity Record
+                    </a>
+                    <a href="/download-template" class="btn btn-un-outline">
+                        <i class="fa-solid fa-file-csv me-1"></i> Download CSV Template
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="card-institutional p-4 border-start border-4 border-primary">
+                    <h3 class="h6 text-uppercase fw-bold text-primary mb-3">Academic Project Boundaries</h3>
+                    <ul class="list-unstyled small text-muted mb-0">
+                        <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i> <strong>Scope 1:</strong> Direct diesel and petrol combustion</li>
+                        <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i> <strong>Scope 2:</strong> Grid electricity via CEA Indian national baseline</li>
+                        <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i> <strong>Scope 3:</strong> Commuting &amp; passenger transit (car, bus, rail)</li>
+                        <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i> <strong>Validation:</strong> Chronological holdout evaluation</li>
+                        <li><i class="fa-solid fa-check text-success me-2"></i> <strong>Exports:</strong> Publication-grade PDF &amp; CSV auditing formats</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,73 @@
+date,category,activity,unit,data_source,notes
+2023-01,electricity,3150.0,kWh,Utility Bill,Campus main administrative block
+2023-01,petrol,420.0,litre,Fuel Receipt,Department shuttle van
+2023-01,diesel,280.0,litre,Fuel Receipt,Backup diesel generator testing
+2023-01,transport_bus,3800.0,km,Commute Survey,Student transit passes
+2023-02,electricity,2980.0,kWh,Utility Bill,Campus main administrative block
+2023-02,petrol,390.0,litre,Fuel Receipt,Department fleet
+2023-02,diesel,210.0,litre,Fuel Receipt,Backup diesel generator testing
+2023-02,transport_bus,3950.0,km,Commute Survey,Transit passes
+2023-03,electricity,3340.0,kWh,Utility Bill,Academic buildings cooling start
+2023-03,petrol,450.0,litre,Fuel Receipt,Field work travel
+2023-03,diesel,290.0,litre,Fuel Receipt,Facility equipment
+2023-03,transport_car_petrol,1850.0,km,Travel Log,Faculty commute
+2023-04,electricity,3850.0,kWh,Utility Bill,Peak summer cooling
+2023-04,petrol,460.0,litre,Fuel Receipt,Department fleet
+2023-04,diesel,320.0,litre,Fuel Receipt,Power outage support
+2023-04,transport_bus,4200.0,km,Commute Survey,Student transit
+2023-05,electricity,4120.0,kWh,Utility Bill,High HVAC utilization
+2023-05,petrol,430.0,litre,Fuel Receipt,Routine operations
+2023-05,diesel,350.0,litre,Fuel Receipt,Campus operations
+2023-05,transport_train,2100.0,km,Travel Log,Inter-campus conference travel
+2023-06,electricity,3650.0,kWh,Utility Bill,Summer term partial load
+2023-06,petrol,380.0,litre,Fuel Receipt,Fleet servicing
+2023-06,diesel,240.0,litre,Fuel Receipt,Maintenance operations
+2023-06,transport_car_diesel,1400.0,km,Travel Log,Administrative travel
+2023-07,electricity,3420.0,kWh,Utility Bill,Monsoon cooling drop
+2023-07,petrol,360.0,litre,Fuel Receipt,Fleet operations
+2023-07,diesel,260.0,litre,Fuel Receipt,Emergency water pumping
+2023-07,transport_bus,3900.0,km,Commute Survey,Campus transit
+2023-08,electricity,3500.0,kWh,Utility Bill,Fall semester preparation
+2023-08,petrol,410.0,litre,Fuel Receipt,Fleet operations
+2023-08,diesel,270.0,litre,Fuel Receipt,Maintenance
+2023-08,transport_car_petrol,1920.0,km,Travel Log,Commuting
+2023-09,electricity,3780.0,kWh,Utility Bill,Full campus occupancy
+2023-09,petrol,440.0,litre,Fuel Receipt,Inter-city transit
+2023-09,diesel,310.0,litre,Fuel Receipt,Laboratory power testing
+2023-09,transport_bus,4400.0,km,Commute Survey,Daily transit
+2023-10,electricity,3620.0,kWh,Utility Bill,Moderate autumn load
+2023-10,petrol,420.0,litre,Fuel Receipt,Fleet operations
+2023-10,diesel,280.0,litre,Fuel Receipt,Campus facility
+2023-10,transport_train,2450.0,km,Travel Log,Academic symposium
+2023-11,electricity,3180.0,kWh,Utility Bill,Cooler weather reduced HVAC
+2023-11,petrol,390.0,litre,Fuel Receipt,Fleet operations
+2023-11,diesel,250.0,litre,Fuel Receipt,Grounds maintenance
+2023-11,transport_bus,4100.0,km,Commute Survey,Daily transit
+2023-12,electricity,2950.0,kWh,Utility Bill,Winter term recess
+2023-12,petrol,340.0,litre,Fuel Receipt,Limited vacation runs
+2023-12,diesel,220.0,litre,Fuel Receipt,Heating equipment
+2023-12,transport_car_petrol,1350.0,km,Travel Log,Faculty commute
+2024-01,electricity,3080.0,kWh,Utility Bill,Spring semester resumption
+2024-01,petrol,405.0,litre,Fuel Receipt,Department fleet
+2024-01,diesel,265.0,litre,Fuel Receipt,Backup testing
+2024-01,transport_bus,4020.0,km,Commute Survey,Student passes
+2024-02,electricity,2920.0,kWh,Utility Bill,Energy efficiency LED retrofit phase 1
+2024-02,petrol,385.0,litre,Fuel Receipt,Department fleet
+2024-02,diesel,205.0,litre,Fuel Receipt,Generators
+2024-02,transport_bus,3980.0,km,Commute Survey,Student passes
+2024-03,electricity,3210.0,kWh,Utility Bill,Spring academic operations
+2024-03,petrol,430.0,litre,Fuel Receipt,Field excursions
+2024-03,diesel,275.0,litre,Fuel Receipt,Campus machinery
+2024-03,transport_car_petrol,1780.0,km,Travel Log,Faculty commute
+2024-04,electricity,3710.0,kWh,Utility Bill,Early summer heat
+2024-04,petrol,445.0,litre,Fuel Receipt,Fleet logistics
+2024-04,diesel,305.0,litre,Fuel Receipt,Power contingency
+2024-04,transport_bus,4150.0,km,Commute Survey,Transit
+2024-05,electricity,3980.0,kWh,Utility Bill,HVAC optimization in progress
+2024-05,petrol,415.0,litre,Fuel Receipt,Routine operations
+2024-05,diesel,330.0,litre,Fuel Receipt,Infrastructure work
+2024-05,transport_train,2250.0,km,Travel Log,Conference travel
+2024-06,electricity,3510.0,kWh,Utility Bill,Solar rooftop 50kW installed
+2024-06,petrol,370.0,litre,Fuel Receipt,Fleet maintenance
+2024-06,diesel,230.0,litre,Fuel Receipt,Maintenance
+2024-06,transport_car_diesel,1320.0,km,Travel Log,Staff travel

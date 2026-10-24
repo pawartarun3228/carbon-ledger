@@ -1,0 +1,263 @@
+{% extends 'base.html' %}
+
+{% block title %}Activity Records Management &mdash; Carbon Ledger{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="page-header-editorial d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div>
+            <span class="page-category-label">Data Management &amp; Audit</span>
+            <h1 class="page-title-editorial">Activity Records &amp; Carbon Inventory</h1>
+            <p class="page-lead-editorial">
+                Review, filter, verify, edit, and bulk-import monthly consumption data with full provenance traceability.
+            </p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="/add-data" class="btn btn-un-primary">
+                <i class="fa-solid fa-plus"></i> Add Single Record
+            </a>
+            <a href="/download-template" class="btn btn-un-secondary">
+                <i class="fa-solid fa-file-arrow-down"></i> CSV Template
+            </a>
+            <a href="/reports/download-csv" class="btn btn-un-outline">
+                <i class="fa-solid fa-download"></i> Export Records (CSV)
+            </a>
+            {% if records|length > 0 %}
+            <form action="/clear-all-data" method="POST" class="d-inline" onsubmit="return confirm('WARNING: Are you sure you want to permanently delete ALL activity records from the inventory? This action cannot be undone.');">
+                <button type="submit" class="btn btn-outline-danger" title="Permanently delete all activity records">
+                    <i class="fa-solid fa-trash-can me-1"></i> Clear All
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- AI Anomaly Detection Audit Review Panel -->
+    {% if anomaly_report and anomaly_report.anomalies_flagged > 0 %}
+    <div class="card-institutional mb-4 border-start border-4 border-warning">
+        <div class="card-institutional-header bg-warning-subtle d-flex justify-content-between align-items-center">
+            <h2 class="card-institutional-title h6 mb-0 text-dark">
+                <i class="fa-solid fa-robot text-warning me-2"></i> Isolation Forest Quality Screening &mdash; {{ anomaly_report.anomalies_flagged }} Items Require Audit Investigation
+            </h2>
+            <span class="badge bg-warning text-dark border">AI Quality Screening</span>
+        </div>
+        <div class="card-institutional-body p-3">
+            <p class="small text-muted mb-3">
+                <strong>Methodological Context:</strong> An unsupervised Isolation Forest screened {{ anomaly_report.total_inspected }} historical records using category-normalized ratios and z-scores. 
+                Flagged items are strictly labeled as <strong>"Items Requiring Audit Investigation"</strong> to guide quality checks (e.g. multi-month billing consolidation or meter multiplier checks). They do <em>not</em> represent confirmed data errors.
+            </p>
+            <div class="table-responsive">
+                <table class="table table-sm table-hover mb-0" style="font-size: 0.85rem;" aria-label="Anomaly Review Table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Period</th>
+                            <th>Category</th>
+                            <th class="numeric-cell">Quantity</th>
+                            <th>Audit Finding</th>
+                            <th>Statistical Explanation</th>
+                            <th>Recommended Auditor Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for a in anomaly_report.flagged_records %}
+                        <tr>
+                            <td class="fw-bold font-monospace">{{ a.date }}</td>
+                            <td class="text-capitalize">{{ a.category.replace('_', ' ') }}</td>
+                            <td class="numeric-cell font-monospace">{{ "{:,.1f}".format(a.activity) }} {{ a.unit }}</td>
+                            <td>
+                                <span class="badge {% if 'High' in a.flag_type %}bg-danger{% else %}bg-info text-dark{% endif %}">
+                                    {{ a.flag_type }}
+                                </span>
+                            </td>
+                            <td class="text-muted">{{ a.explanation }}</td>
+                            <td><small class="text-secondary">{{ a.recommended_action }}</small></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Bulk CSV Upload Box -->
+    <div class="card-institutional mb-4" id="csv-upload-section">
+        <div class="card-institutional-header bg-light">
+            <h2 class="card-institutional-title h6 mb-0">
+                <i class="fa-solid fa-file-csv me-2 text-primary"></i> Bulk CSV Activity Data Import
+            </h2>
+            <span class="small text-muted">Supports UTF-8 CSV with columns: date, category, activity, unit, data_source, notes</span>
+        </div>
+        <div class="card-institutional-body">
+            <form action="/upload-csv" method="POST" enctype="multipart/form-data" class="row g-3 align-items-center">
+                <div class="col-md-7">
+                    <label for="csvFileInput" class="visually-hidden">Choose CSV file</label>
+                    <input type="file" id="csvFileInput" name="file" accept=".csv" class="form-control form-control-sm" required>
+                    <div class="form-text small">
+                        Dates must be <code>YYYY-MM</code> or <code>YYYY-MM-DD</code>. Quantities must be positive numbers. Duplicate rows will trigger warnings.
+                    </div>
+                </div>
+                <div class="col-md-5 d-flex gap-2">
+                    <button type="submit" class="btn btn-sm btn-un-primary flex-grow-1">
+                        <i class="fa-solid fa-upload me-1"></i> Upload &amp; Calculate
+                    </button>
+                    <a href="/download-template" class="btn btn-sm btn-outline-secondary">
+                        <i class="fa-solid fa-circle-question"></i> Sample Format
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Multi-Dimensional Filter Bar -->
+    <div class="card-institutional p-3 mb-4 bg-white">
+        <form method="GET" action="/history" class="row g-2 align-items-end">
+            <div class="col-md-3 col-sm-6">
+                <label for="filter_category" class="form-institutional-label">Category</label>
+                <select name="category" id="filter_category" class="form-institutional-control form-select-sm">
+                    <option value="">All Categories</option>
+                    {% for c in categories %}
+                    <option value="{{ c.key }}" {% if selected_category == c.key %}selected{% endif %}>
+                        {{ c.name }} ({{ c.scope }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-2 col-sm-6">
+                <label for="filter_month" class="form-institutional-label">Specific Month</label>
+                <input type="month" name="month" id="filter_month" value="{{ selected_month }}" class="form-institutional-control form-control-sm">
+            </div>
+
+            <div class="col-md-2 col-sm-6">
+                <label for="filter_from" class="form-institutional-label">From Date</label>
+                <input type="month" name="date_from" id="filter_from" value="{{ date_from }}" class="form-institutional-control form-control-sm">
+            </div>
+
+            <div class="col-md-2 col-sm-6">
+                <label for="filter_to" class="form-institutional-label">To Date</label>
+                <input type="month" name="date_to" id="filter_to" value="{{ date_to }}" class="form-institutional-control form-control-sm">
+            </div>
+
+            <div class="col-md-2 col-sm-6">
+                <label for="filter_demo" class="form-institutional-label">Data Provenance</label>
+                <select name="is_demo" id="filter_demo" class="form-institutional-control form-select-sm">
+                    <option value="">All Records</option>
+                    <option value="0" {% if selected_demo == '0' %}selected{% endif %}>Measured Only</option>
+                    <option value="1" {% if selected_demo == '1' %}selected{% endif %}>Demonstration Only</option>
+                </select>
+            </div>
+
+            <div class="col-md-1 col-sm-12 d-flex gap-1">
+                <button type="submit" class="btn btn-sm btn-un-primary w-100" title="Apply Filters">
+                    <i class="fa-solid fa-filter"></i>
+                </button>
+                {% if selected_category or selected_month or date_from or date_to or selected_demo %}
+                <a href="/history" class="btn btn-sm btn-outline-secondary" title="Clear Filters">
+                    <i class="fa-solid fa-rotate-left"></i>
+                </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <!-- Inventory Summary Strip -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+        <div class="small text-muted">
+            Displaying <strong>{{ records|length }}</strong> activity records &bull; Filtered Total: <strong>{{ "{:,.1f}".format(total_co2e) }} kg CO₂e</strong> ({{ total_tonnes }} tonnes)
+        </div>
+        {% if records|length > 0 %}
+        <div>
+            <form action="/clear-all-data" method="POST" class="d-inline" onsubmit="return confirm('WARNING: Are you sure you want to permanently delete ALL activity records from the inventory? This action cannot be undone.');">
+                <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2" title="Delete all activity records">
+                    <i class="fa-solid fa-trash-can me-1"></i> Clear All Records
+                </button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Records Table -->
+    <div class="card-institutional">
+        <div class="table-responsive">
+            <table class="table table-institutional mb-0" aria-label="Activity Records Table">
+                <thead>
+                    <tr>
+                        <th scope="col" style="width: 90px;">Date</th>
+                        <th scope="col">Activity &amp; Scope</th>
+                        <th scope="col" class="numeric-cell">Quantity</th>
+                        <th scope="col">Unit</th>
+                        <th scope="col" class="numeric-cell">Factor</th>
+                        <th scope="col" class="numeric-cell">Emissions (kg CO₂e)</th>
+                        <th scope="col">Source &amp; Provenance</th>
+                        <th scope="col">Notes</th>
+                        <th scope="col" class="text-center" style="width: 100px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set flagged_ids = [] %}
+                    {% if anomaly_report and anomaly_report.flagged_records %}
+                        {% for a in anomaly_report.flagged_records %}
+                            {% set _ = flagged_ids.append(a.record_id) %}
+                        {% endfor %}
+                    {% endif %}
+
+                    {% for r in records %}
+                    <tr {% if r.id in flagged_ids %}class="table-warning-subtle"{% endif %}>
+                        <td class="fw-semibold">
+                            {{ r.date }}
+                            {% if r.id in flagged_ids %}
+                                <span class="badge bg-warning text-dark ms-1" title="Flagged by Isolation Forest: Requires verification"><i class="fa-solid fa-triangle-exclamation"></i> Audit</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="text-capitalize fw-medium">{{ r.category.replace('_', ' ') }}</span>
+                            {% if r.category == 'electricity' %}
+                                <span class="badge-scope badge-scope-2 ms-1">Scope 2</span>
+                            {% elif r.category in ['petrol', 'diesel'] %}
+                                <span class="badge-scope badge-scope-1 ms-1">Scope 1</span>
+                            {% else %}
+                                <span class="badge-scope badge-scope-3 ms-1">Scope 3</span>
+                            {% endif %}
+                        </td>
+                        <td class="numeric-cell">{{ "{:,.2f}".format(r.activity) }}</td>
+                        <td>{{ r.unit }}</td>
+                        <td class="numeric-cell font-monospace small" title="{{ r.factor_source }}">{{ r.emission_factor }}</td>
+                        <td class="numeric-cell fw-bold">{{ "{:,.2f}".format(r.co2e) }}</td>
+                        <td>
+                            <span class="badge bg-light text-dark border">{{ r.data_source or 'Manual Entry' }}</span>
+                            {% if r.is_demo %}
+                                <span class="badge bg-warning text-dark ms-1">Demo</span>
+                            {% endif %}
+                        </td>
+                        <td class="small text-muted" style="max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ r.notes }}">
+                            {{ r.notes or '—' }}
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group btn-group-sm">
+                                <a href="/edit-data/{{ r.id }}" class="btn btn-outline-secondary btn-sm" title="Edit Record">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <form action="/delete-data/{{ r.id }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this record?');">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Delete Record">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="9" class="text-center py-5 text-muted">
+                            <i class="fa-solid fa-folder-open fa-2x mb-3 d-block text-secondary"></i>
+                            No activity records found matching the active criteria.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

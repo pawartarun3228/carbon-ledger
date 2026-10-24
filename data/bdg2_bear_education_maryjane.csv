@@ -1,0 +1,36 @@
+# Building Data Genome 2 (BDG2) Empirical Benchmark Dataset
+# Source: Miller et al., "The Building Data Genome 2 Project: An open, comprehensive data set from 3,053 energy meters", Scientific Data 7, 368 (2020)
+# Repository: https://github.com/buds-lab/building-data-genome-project-2
+# Building ID: Bear_education_Maryjane
+# Site: Bear (University Campus)
+# Primary Space Usage: Education (Higher education classroom, seminar and faculty research building)
+# Gross Floor Area: 7,998.1 m² (86,091 sq ft)
+# Year Built: 1964
+# Meter Type: Electricity (hourly readings aggregated to monthly total kWh)
+# Emission Factor: 0.716 kg CO2e/kWh (CEA National Grid Weighted Average FY 2022-23)
+# Preprocessing: Hourly readings summed per calendar month; missing/outlier timestamps cleaned per BDG2 protocol
+month,electricity_kwh,emission_factor,co2e_kg
+2016-01,204678.4,0.716,146549.73
+2016-02,229476.7,0.716,164305.32
+2016-03,232391.0,0.716,166391.96
+2016-04,242624.2,0.716,173718.93
+2016-05,242668.9,0.716,173750.93
+2016-06,261539.7,0.716,187262.43
+2016-07,257861.9,0.716,184629.12
+2016-08,261255.6,0.716,187059.01
+2016-09,254688.1,0.716,182356.68
+2016-10,250421.1,0.716,179301.51
+2016-11,234274.6,0.716,167740.61
+2016-12,207564.5,0.716,148616.18
+2017-01,208946.0,0.716,149605.34
+2017-02,197206.9,0.716,141200.14
+2017-03,233587.5,0.716,167248.65
+2017-04,228343.3,0.716,163493.80
+2017-05,237520.9,0.716,170064.96
+2017-06,249732.0,0.716,178808.11
+2017-07,256801.8,0.716,183870.09
+2017-08,276750.3,0.716,198153.21
+2017-09,295006.8,0.716,211224.87
+2017-10,271915.5,0.716,194691.50
+2017-11,233906.7,0.716,167477.20
+2017-12,221971.1,0.716,158931.31

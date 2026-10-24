@@ -1,0 +1,312 @@
+{% extends 'base.html' %}
+
+{% block title %}Forecasting Lab &mdash; Carbon Ledger{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="page-header-editorial d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div>
+            <span class="page-category-label">Research &amp; Machine Learning</span>
+            <h1 class="page-title-editorial">Forecasting Lab &amp; Model Benchmark</h1>
+            <p class="page-lead-editorial">
+                Rigorous time-series forecasting experiments using strictly chronological rolling-window backtesting to prevent lookahead data leakage.
+            </p>
+        </div>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <div class="btn-group btn-group-sm" role="group" aria-label="Benchmark Dataset Selection">
+                <a href="/forecasting" class="btn {% if benchmark_mode == 'inventory' or not benchmark_mode %}btn-un-primary{% else %}btn-outline-secondary{% endif %}">
+                    <i class="fa-solid fa-database me-1"></i> Inventory Records
+                </a>
+                <a href="/forecasting?benchmark=bdg2" class="btn {% if benchmark_mode == 'bdg2' %}btn-un-primary{% else %}btn-outline-secondary{% endif %}" title="24-Month Higher Education Building Benchmark (Building Data Genome 2)">
+                    <i class="fa-solid fa-building-columns me-1"></i> BDG2 Empirical (24 Mo)
+                </a>
+                <a href="/forecasting?benchmark=synthetic" class="btn {% if benchmark_mode == 'synthetic' %}btn-un-primary{% else %}btn-outline-secondary{% endif %}" title="24-Month Seasonal Verification Series">
+                    <i class="fa-solid fa-flask-vial me-1"></i> Synthetic (24 Mo)
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Experimental Setup & Methodological Note -->
+    <div class="audit-alert alert-info mb-4">
+        <div class="d-flex align-items-start">
+            <i class="fa-solid fa-microscope text-primary me-3 mt-1 fa-lg"></i>
+            <div>
+                <div class="audit-alert-title">Time-Series Experimental Methodology &amp; Leakage Prevention</div>
+                <div class="audit-alert-body">
+                    <strong>Chronological Rolling-Window Backtesting:</strong> Time-series data must never undergo random train/test shuffling. 
+                    Models are evaluated via chronological rolling-window (expanding window) backtesting where each test step is predicted strictly using prior historical observations. 
+                    Lag features (lag<sub>1</sub>, lag<sub>2</sub>, 3-month rolling mean) and cyclical calendar terms (sin<sub>month</sub>, cos<sub>month</sub>) are engineered exclusively from past intervals.
+                    <strong>Declared Model Selection Criterion:</strong> The best model is selected based on lowest <strong>Root Mean Squared Error (RMSE)</strong> across identical chronological test folds.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if not experiment.has_sufficient_data %}
+        <!-- Insufficient Data Warning -->
+        <div class="card-institutional p-5 text-center bg-white">
+            <i class="fa-solid fa-triangle-exclamation fa-3x text-warning mb-3"></i>
+            <h2 class="h4 fw-bold text-navy mb-2">Insufficient Historical Monthly Observations</h2>
+            <p class="text-muted mx-auto mb-4" style="max-width: 620px;">
+                {{ experiment.message }} Currently you have <strong>{{ experiment.data_points }}</strong> monthly points. 
+                Time-series forecasting with lag features requires at least 5 consecutive monthly observations for minimal split stability.
+            </p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="/forecasting?benchmark=bdg2" class="btn btn-un-primary">
+                    <i class="fa-solid fa-building-columns me-1"></i> Run on 24-Month BDG2 Empirical Benchmark
+                </a>
+                <a href="/forecasting?benchmark=synthetic" class="btn btn-un-secondary">
+                    <i class="fa-solid fa-flask me-1"></i> Run on 24-Month Synthetic Benchmark
+                </a>
+                <form action="/api/load-demo-data" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-outline-secondary">Load 18-Month Demo Data</button>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        <!-- Model Evaluation Benchmark Table -->
+        <div class="card-institutional mb-4">
+            <div class="card-institutional-header d-flex justify-content-between align-items-center">
+                <h2 class="card-institutional-title h6 mb-0">
+                    Model Evaluation Benchmark &mdash; {{ experiment.dataset_type }}
+                </h2>
+                <div class="small text-muted">
+                    Initial Training Cutoff: <strong>{{ experiment.train_cutoff }}</strong> &bull; Evaluation Period: <strong>{{ experiment.test_period }}</strong>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-institutional mb-0" aria-label="Model Comparison Table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Model Candidate</th>
+                            <th scope="col">Architecture &amp; Features</th>
+                            <th scope="col" class="numeric-cell">Training / Test Horizon</th>
+                            <th scope="col" class="numeric-cell">MAE (kg CO₂e)</th>
+                            <th scope="col" class="numeric-cell">RMSE (kg CO₂e)</th>
+                            <th scope="col" class="numeric-cell">R² Score</th>
+                            <th scope="col" class="text-center">Evaluation Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for m in experiment.models %}
+                        <tr {% if m.is_best %}class="table-primary fw-medium"{% endif %}>
+                            <td>
+                                <strong>{{ m.model_name }}</strong>
+                                <div class="small text-muted">{{ m.description }}</div>
+                            </td>
+                            <td class="font-monospace small">{{ m.features }}</td>
+                            <td class="numeric-cell">{{ m.train_points }} pts initial / {{ m.test_points }} rolling folds</td>
+                            <td class="numeric-cell font-monospace">{{ "{:,.2f}".format(m.mae) }}</td>
+                            <td class="numeric-cell font-monospace fw-bold">{{ "{:,.2f}".format(m.rmse) }}</td>
+                            <td class="numeric-cell font-monospace">
+                                {% if m.r2 is not none %}
+                                    <span class="{% if m.r2 < 0 %}text-warning{% else %}text-success{% endif %}">
+                                        {{ "%.4f"|format(m.r2) }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted" title="R² not statistically valid for single-point holdouts">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                {% if m.is_best %}
+                                    <span class="badge bg-success">
+                                        <i class="fa-solid fa-trophy me-1"></i> Best Model
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-light text-secondary border">Evaluated</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- R² Mathematical Explanation Card -->
+        <div class="audit-alert alert-warning mb-4">
+            <div class="d-flex align-items-start">
+                <i class="fa-solid fa-circle-info text-warning me-3 mt-1 fa-lg"></i>
+                <div class="small">
+                    <strong>Mathematical Interpretation of R² in Time Series:</strong>
+                    {{ experiment.r2_explanation }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Forecasting Comparison Chart -->
+        <div class="card-institutional mb-4">
+            <div class="card-institutional-header d-flex justify-content-between align-items-center">
+                <h2 class="card-institutional-title h6 mb-0">
+                    Chronological Trajectory &amp; Multi-Model Evaluation
+                </h2>
+                <span class="badge bg-light text-dark border">Interactive Multi-Series</span>
+            </div>
+            <div class="card-institutional-body">
+                <div class="chart-box" style="height: 360px;">
+                    <canvas id="experimentForecastChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Future Out-of-Sample Projections -->
+        <div class="row g-3 mb-4">
+            <div class="col-12">
+                <h3 class="h6 text-uppercase fw-bold text-muted mb-2">
+                    <i class="fa-solid fa-forward me-1"></i> Dynamic Out-of-Sample Projections (Selected Best Model: {{ experiment.best_model }})
+                </h3>
+            </div>
+            {% for f in experiment.future_forecasts %}
+            <div class="col-md-4">
+                <div class="kpi-card p-3">
+                    <div class="kpi-label">{{ f.month }}</div>
+                    <div class="kpi-value fs-3">{{ "{:,.1f}".format(f.forecast_co2e) }} <small class="fs-6 text-muted">kg CO₂e</small></div>
+                    <div class="small text-muted">{{ (f.forecast_co2e / 1000)|round(3) }} metric tonnes</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Scientific Assumptions & Limitations -->
+        <div class="card-institutional p-4 border-start border-4 border-secondary">
+            <h4 class="h6 fw-bold text-navy mb-2">Research Assumptions, Provenance &amp; Scientific Limitations</h4>
+            <ul class="small text-muted mb-0 ps-3">
+                <li class="mb-1">
+                    <strong>Dataset Provenance:</strong> The demonstration inventory represents a university academic department facility (18 months, Jan 2023 &ndash; Jun 2024, ~1,800 m² floor area, ~120 occupants). The BDG2 empirical benchmark represents building <code>Bear_education_Maryjane</code> from the Building Data Genome 2 project (Miller et al., 2020), an 86,091 sq ft (7,998.1 m²) university higher education building with 24 months of sub-metered electricity readings (2016&ndash;2017).
+                </li>
+                <li class="mb-1">
+                    <strong>Small Sample Variance:</strong> Short time series (&lt; 24 months) exhibit elevated variance in autoregressive coefficients. Over small holdouts with low variance, residual sum of squares can exceed total sum of squares, mathematically causing negative R². Evaluating across a 12-month rolling cycle on the BDG2 benchmark demonstrates positive R² (up to ~0.49).
+                </li>
+                <li class="mb-1">
+                    <strong>Exogenous Weather Drivers:</strong> Building cooling and heating loads depend heavily on local ambient degree-days (weather), occupancy schedules, and academic calendars which are not fully captured by autoregressive lag terms alone.
+                </li>
+                <li class="mb-0">
+                    <strong>Scientific Disclaimer:</strong> Time-series forecasting models in this prototype are designed for comparative methodology study. Statistical extrapolation cannot substitute for certified engineering energy audits.
+                </li>
+            </ul>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if experiment.has_sufficient_data %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const histData = {{ experiment.historical_series | tojson }};
+    const models = {{ experiment.models | tojson }};
+    const futureForecasts = {{ experiment.future_forecasts | tojson }};
+
+    const histLabels = histData.map(d => d.month);
+    const histValues = histData.map(d => d.co2e);
+
+    const futureLabels = futureForecasts.map(f => f.month);
+    const futureValues = futureForecasts.map(f => f.forecast_co2e);
+
+    const allLabels = [...histLabels, ...futureLabels];
+
+    // Build datasets
+    const datasets = [];
+
+    // 1. Historical Actuals Line
+    datasets.push({
+        label: 'Historical Actuals (kg CO2e)',
+        data: [...histValues, ...Array(futureLabels.length).fill(null)],
+        borderColor: '#0b2545',
+        backgroundColor: 'rgba(11, 37, 69, 0.05)',
+        borderWidth: 2,
+        pointRadius: 4,
+        tension: 0.1
+    });
+
+    // 2. Each Model's test predictions
+    const modelColors = {
+        'Naive Baseline (Previous Month)': '#94a3b8',
+        'Linear Regression': '#004f98',
+        'Random Forest Regressor': '#0d9488'
+    };
+
+    models.forEach(m => {
+        const testLabels = m.test_labels;
+        const preds = m.predictions;
+
+        // Create an array aligned with histLabels
+        const modelData = Array(histLabels.length).fill(null);
+        testLabels.forEach((tLbl, idx) => {
+            const hIdx = histLabels.indexOf(tLbl);
+            if (hIdx !== -1) {
+                modelData[hIdx] = preds[idx];
+            }
+        });
+
+        datasets.push({
+            label: `${m.model_name} (Rolling Test)`,
+            data: [...modelData, ...Array(futureLabels.length).fill(null)],
+            borderColor: modelColors[m.model_name] || '#d97706',
+            borderDash: m.is_best ? [2, 2] : [5, 5],
+            borderWidth: m.is_best ? 2.5 : 1.5,
+            pointRadius: 3,
+            fill: false
+        });
+    });
+
+    // 3. Out-of-sample forward projections
+    const forwardData = Array(histLabels.length - 1).fill(null);
+    forwardData.push(histValues[histValues.length - 1]); // Connect seamlessly
+    forwardData.push(...futureValues);
+
+    datasets.push({
+        label: 'Best Model Forecast Horizon',
+        data: forwardData,
+        borderColor: '#d97706',
+        borderDash: [4, 4],
+        borderWidth: 2,
+        pointBackgroundColor: '#d97706',
+        pointRadius: 5,
+        fill: false
+    });
+
+    const ctx = document.getElementById('experimentForecastChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: allLabels,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    grid: { color: '#f1f5f9' },
+                    ticks: {
+                        callback: val => val.toLocaleString() + ' kg'
+                    }
+                },
+                x: {
+                    grid: { display: false }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: { boxWidth: 14, font: { size: 11 } }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (ctx) {
+                            if (ctx.parsed.y === null) return '';
+                            return ` ${ctx.dataset.label}: ${ctx.parsed.y.toLocaleString()} kg CO2e`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endif %}
+{% endblock %}

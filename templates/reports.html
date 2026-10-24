@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block title %}Sustainability Reports &amp; Exports &mdash; Carbon Ledger{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="page-header-editorial d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div>
+            <span class="page-category-label">Governance &amp; Disclosures</span>
+            <h1 class="page-title-editorial">Sustainability Reports &amp; Data Exports</h1>
+            <p class="page-lead-editorial">
+                Generate formal greenhouse gas inventory disclosures in publication-grade PDF and structured CSV formats.
+            </p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="/reports/download-pdf" class="btn btn-un-primary">
+                <i class="fa-solid fa-file-pdf"></i> Download Official PDF Report
+            </a>
+            <a href="/reports/download-csv" class="btn btn-un-secondary">
+                <i class="fa-solid fa-file-csv text-success"></i> Export Activities (CSV)
+            </a>
+            <a href="/reports/download-monthly-csv" class="btn btn-un-outline">
+                <i class="fa-solid fa-table"></i> Monthly Summary (CSV)
+            </a>
+        </div>
+    </div>
+
+    <!-- On-Screen Report Preview -->
+    <div class="card-institutional p-5 bg-white border">
+        <!-- Institutional Report Header -->
+        <div class="border-bottom pb-4 mb-4 d-flex justify-content-between align-items-center">
+            <div>
+                <span class="text-uppercase fw-bold text-primary small letter-spacing-1">Formal Inventory Disclosure</span>
+                <h2 class="h3 fw-bold text-navy mb-1">Carbon Ledger &mdash; GHG Inventory &amp; Net-Zero Assessment</h2>
+                <div class="text-muted small">
+                    Academic Engineering Prototype &bull; Standards: GHG Protocol, CEA India v19, IPCC 2006, UK DEFRA 2023
+                </div>
+            </div>
+            <div class="text-end text-muted small">
+                <div><strong>System Boundary:</strong> Scopes 1, 2, and 3</div>
+                <div><strong>Status:</strong> Unaudited Demonstration Inventory</div>
+            </div>
+        </div>
+
+        <!-- Executive Summary Numbers -->
+        <h3 class="h6 fw-bold text-uppercase text-navy mb-3">1. Executive Summary &amp; Scope Distribution</h3>
+        <div class="row g-3 text-center mb-4">
+            <div class="col-md-3">
+                <div class="p-3 bg-light rounded border">
+                    <span class="small text-muted d-block">Total Inventory</span>
+                    <strong class="h4 text-navy font-monospace">{{ "{:,.1f}".format(aggregation.total_kg) }}</strong>
+                    <div class="small text-muted">kg CO₂e ({{ aggregation.total_tonnes }} tonnes)</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="p-3 bg-light rounded border">
+                    <span class="small text-muted d-block">Scope 1 (Direct Fuel)</span>
+                    <strong class="h4 text-danger font-monospace">{{ "{:,.1f}".format(aggregation.scopes.get('Scope 1', 0.0)) }}</strong>
+                    <div class="small text-muted">kg CO₂e</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="p-3 bg-light rounded border">
+                    <span class="small text-muted d-block">Scope 2 (Electricity)</span>
+                    <strong class="h4 text-primary font-monospace">{{ "{:,.1f}".format(aggregation.scopes.get('Scope 2', 0.0)) }}</strong>
+                    <div class="small text-muted">kg CO₂e</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="p-3 bg-light rounded border">
+                    <span class="small text-muted d-block">Scope 3 (Commuting/Travel)</span>
+                    <strong class="h4 text-warning font-monospace">{{ "{:,.1f}".format(aggregation.scopes.get('Scope 3', 0.0)) }}</strong>
+                    <div class="small text-muted">kg CO₂e</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Breakdown Table -->
+        <h3 class="h6 fw-bold text-uppercase text-navy mb-3">2. Category-Level Emissions Summary</h3>
+        <div class="table-responsive mb-4">
+            <table class="table table-institutional mb-0">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Scope</th>
+                        <th class="numeric-cell">Record Count</th>
+                        <th class="numeric-cell">Emissions (kg CO₂e)</th>
+                        <th class="numeric-cell">Emissions (tonnes)</th>
+                        <th class="numeric-cell">Share of Inventory</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cat_k, cat in aggregation.categories.items() %}
+                    <tr>
+                        <td><strong>{{ cat.name }}</strong></td>
+                        <td>{{ cat.scope }}</td>
+                        <td class="numeric-cell">{{ cat.count }}</td>
+                        <td class="numeric-cell font-monospace">{{ "{:,.1f}".format(cat.kg_co2e) }}</td>
+                        <td class="numeric-cell font-monospace">{{ cat.tonnes_co2e }}</td>
+                        <td class="numeric-cell font-monospace fw-bold">{{ cat.percentage }}%</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-3 text-muted">No activities currently recorded.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Net-Zero Target Alignment -->
+        {% if target %}
+        <h3 class="h6 fw-bold text-uppercase text-navy mb-3">3. Net-Zero Target Governance Alignment</h3>
+        <div class="p-3 bg-light rounded border mb-4">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <span class="small text-muted d-block">Baseline Emissions:</span>
+                    <strong>{{ "{:,.1f}".format(target.baseline_emission) }} kg CO₂e</strong>
+                </div>
+                <div class="col-md-3">
+                    <span class="small text-muted d-block">Target Commitment:</span>
+                    <strong>{{ target.target_reduction_percentage }}% Reduction</strong>
+                </div>
+                <div class="col-md-3">
+                    <span class="small text-muted d-block">Target Year:</span>
+                    <strong>{{ target.target_year }}</strong>
+                </div>
+                <div class="col-md-3">
+                    <span class="small text-muted d-block">Target Allowance:</span>
+                    <strong>{{ "{:,.1f}".format(target.target_emission) }} kg CO₂e</strong>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Compliance & Regulatory Disclaimer -->
+        <div class="border-top pt-4 text-muted small">
+            <h4 class="h6 fw-bold text-navy mb-1">Institutional Audit &amp; Data Quality Statement</h4>
+            <p class="mb-0">
+                This document is a software-generated demonstration inventory produced by the Carbon Ledger academic prototype platform. 
+                Conversion factors reflect published CEA combined margin (India) and IPCC 2006 benchmarks for educational and engineering analysis. 
+                This report does not constitute a certified third-party environmental audit under ISO 14064 or official compliance certification for statutory reporting bodies.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Activity Record #{{ record.id }} &mdash; Carbon Ledger{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width: 780px;">
+    <div class="page-header-editorial text-center">
+        <span class="page-category-label">Inventory Correction</span>
+        <h1 class="page-title-editorial">Edit Activity Record #{{ record.id }}</h1>
+        <p class="page-lead-editorial mx-auto">
+            Update quantity, date, or metadata. Recalculation will apply automatically.
+        </p>
+    </div>
+
+    <div class="card-institutional">
+        <div class="card-institutional-body p-4">
+            <form method="POST" action="/edit-data/{{ record.id }}">
+                <div class="row g-3">
+                    <!-- Date -->
+                    <div class="col-md-6">
+                        <label for="date-input" class="form-institutional-label">Reporting Period (YYYY-MM) <span class="text-danger">*</span></label>
+                        <input type="text" id="date-input" name="date" value="{{ record.date }}" class="form-institutional-control" required>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="col-md-6">
+                        <label for="activity-category-select" class="form-institutional-label">Activity Category <span class="text-danger">*</span></label>
+                        <select id="activity-category-select" name="category" class="form-institutional-control" required>
+                            {% for c in categories %}
+                            <option value="{{ c.key }}" data-unit="{{ c.unit }}" {% if record.category == c.key %}selected{% endif %}>
+                                {{ c.name }} ({{ c.scope }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Quantity -->
+                    <div class="col-md-6">
+                        <label for="activity-quantity-input" class="form-institutional-label">Activity Quantity <span class="text-danger">*</span></label>
+                        <input type="number" step="any" min="0.0001" id="activity-quantity-input" name="activity" value="{{ record.activity }}" class="form-institutional-control" required>
+                    </div>
+
+                    <!-- Unit -->
+                    <div class="col-md-6">
+                        <label for="activity-unit-select" class="form-institutional-label">Unit of Measure</label>
+                        <input type="text" id="activity-unit-select" name="unit" value="{{ record.unit }}" class="form-institutional-control">
+                    </div>
+
+                    <!-- Data Source -->
+                    <div class="col-md-6">
+                        <label for="data-source-select" class="form-institutional-label">Data Source Verification</label>
+                        <select id="data-source-select" name="data_source" class="form-institutional-control">
+                            {% for src in sources %}
+                            <option value="{{ src }}" {% if record.data_source == src %}selected{% endif %}>{{ src }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="col-md-6">
+                        <label for="notes-input" class="form-institutional-label">Facility / Meter Notes</label>
+                        <input type="text" id="notes-input" name="notes" value="{{ record.notes }}" class="form-institutional-control">
+                    </div>
+                </div>
+
+                <!-- Live Preview -->
+                <div id="live-calc-preview" class="audit-alert alert-info mt-4">
+                    <div class="d-flex align-items-center">
+                        <i class="fa-solid fa-calculator text-primary me-3 fa-lg"></i>
+                        <div>
+                            <div class="audit-alert-title">Current Emission Calculation</div>
+                            <div class="h5 fw-bold text-navy mb-1" id="preview-co2e-val">{{ record.co2e }} kg CO2e</div>
+                            <div class="small text-muted" id="preview-factor-val">Applied Factor: {{ record.emission_factor }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+                    <a href="/history" class="btn btn-un-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-un-primary">
+                        <i class="fa-solid fa-save me-1"></i> Update Record
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

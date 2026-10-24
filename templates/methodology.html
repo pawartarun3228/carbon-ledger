@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+
+{% block title %}Scientific Methodology &amp; Architecture &mdash; Carbon Ledger{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="page-header-editorial">
+        <span class="page-category-label">Academic Documentation</span>
+        <h1 class="page-title-editorial">Scientific Methodology &amp; System Architecture</h1>
+        <p class="page-lead-editorial">
+            Technical foundation, GHG Protocol accounting boundaries, emission factor provenance, and time-series machine learning experimental design.
+        </p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Main Documentation Body -->
+        <div class="col-lg-8">
+            <!-- 1. Objectives & Distinction -->
+            <article class="card-institutional p-4 mb-4">
+                <h2 class="h5 fw-bold text-navy mb-3">1. Carbon Accounting vs. Machine Learning</h2>
+                <p class="text-secondary small">
+                    A foundational design principle of Carbon Ledger is the rigorous separation between 
+                    <strong>deterministic environmental accounting</strong> and <strong>probabilistic machine learning forecasting</strong>:
+                </p>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm small mb-3">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Dimension</th>
+                                <th>Carbon Accounting Engine</th>
+                                <th>Machine Learning Forecasting Lab</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Paradigm</strong></td>
+                                <td>Deterministic, physics-based stoichiometric inventory</td>
+                                <td>Statistical / non-linear pattern extrapolation</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Governing Formula</strong></td>
+                                <td>E = &Sigma; (Activity<sub>i</sub> &times; Factor<sub>i</sub>)</td>
+                                <td>ŷ<sub>t</sub> = f(trend<sub>t</sub>, y<sub>t-1</sub>, y<sub>t-2</sub>, ȳ<sub>3</sub>, sin<sub>m</sub>, cos<sub>m</sub>)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Regulatory Role</strong></td>
+                                <td>Official compliance, audited footprint, baseline setting</td>
+                                <td>Internal budgetary projections and scenario planning</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Error Handling</strong></td>
+                                <td>Zero-tolerance: rejects non-finite, negative, missing inputs</td>
+                                <td>Evaluated via holdout error metrics (MAE, RMSE)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
+            <!-- 2. System Boundaries -->
+            <article class="card-institutional p-4 mb-4">
+                <h2 class="h5 fw-bold text-navy mb-3">2. System Boundaries &amp; Scope Classification</h2>
+                <p class="text-secondary small">
+                    Carbon Ledger implements standard corporate inventory boundaries under the <strong>Greenhouse Gas Protocol Corporate Accounting and Reporting Standard</strong>:
+                </p>
+                <ul class="text-secondary small ps-3">
+                    <li class="mb-2">
+                        <strong>Scope 1 (Direct Emissions):</strong> Direct emissions from fuel combustion owned or controlled by the reporting organization. 
+                        Includes stationary backup diesel generators and department-owned vehicle petrol/diesel combustion.
+                    </li>
+                    <li class="mb-2">
+                        <strong>Scope 2 (Indirect Grid Electricity):</strong> Emissions associated with the generation of purchased grid electricity consumed on facility premises. 
+                        Calculated via location-based grid emission factors from the Central Electricity Authority (CEA) of India.
+                    </li>
+                    <li class="mb-0">
+                        <strong>Scope 3 (Other Indirect Commuter Transit):</strong> Category 7 employee commuting and business travel, including passenger cars, municipal transit buses, and passenger rail transport.
+                    </li>
+                </ul>
+            </article>
+
+            <!-- 3. Mathematical Formulations -->
+            <article class="card-institutional p-4 mb-4">
+                <h2 class="h5 fw-bold text-navy mb-3">3. Mathematical Formulations &amp; Metrics</h2>
+                <div class="p-3 bg-light rounded border mb-3">
+                    <span class="small fw-bold text-uppercase text-muted d-block mb-1">Carbon Accounting Equation:</span>
+                    <div class="h6 font-monospace text-navy mb-0">
+                        Emissions (kg CO₂e) = Activity Quantity &times; Compatible Emission Factor
+                    </div>
+                </div>
+
+                <div class="p-3 bg-light rounded border mb-3">
+                    <span class="small fw-bold text-uppercase text-muted d-block mb-1">Net-Zero Target Allowance:</span>
+                    <div class="h6 font-monospace text-navy mb-0">
+                        Target Allowance = Baseline &times; (1 &minus; Target Reduction Fraction)
+                    </div>
+                </div>
+
+                <div class="p-3 bg-light rounded border mb-3">
+                    <span class="small fw-bold text-uppercase text-muted d-block mb-1">Forecasting Error Metrics:</span>
+                    <div class="small font-monospace text-navy mb-1">
+                        MAE = (1 / n) &times; &Sigma; | y_actual &minus; y_pred |
+                    </div>
+                    <div class="small font-monospace text-navy mb-0">
+                        RMSE = &radic; [ (1 / n) &times; &Sigma; (y_actual &minus; y_pred)&sup2; ]
+                    </div>
+                </div>
+            </article>
+
+            <!-- 4. ML Experimental Rigor -->
+            <article class="card-institutional p-4 mb-4">
+                <h2 class="h5 fw-bold text-navy mb-3">4. Machine Learning Experimental Rigor</h2>
+                <p class="text-secondary small">
+                    To maintain scientific defensibility, Carbon Ledger strictly forbids random train/test data splits for time-series modeling. 
+                    Random shuffling destroys temporal order and creates catastrophic <em>lookahead leakage</em>.
+                </p>
+                <div class="p-3 bg-light rounded border mb-3">
+                    <h3 class="h6 fw-bold text-navy mb-1">Leakage Prevention Protocol:</h3>
+                    <ol class="small text-muted ps-3 mb-0">
+                        <li class="mb-1">All monthly observations are sorted in strict chronological sequence.</li>
+                        <li class="mb-1">Lag features (lag<sub>1</sub>, lag<sub>2</sub>, 3-month rolling mean, and seasonal sine/cosine terms) are constructed using only prior temporal steps.</li>
+                        <li class="mb-1">Evaluation uses chronological rolling-window (expanding window) backtesting where each test step is predicted strictly using prior historical observations.</li>
+                        <li class="mb-0">Candidate models (Naive Persistence Baseline, Ridge Linear Regression, Random Forest Regressor) are compared across identical chronological test windows.</li>
+                    </ol>
+                </div>
+            </article>
+
+            <!-- 5. Limitations & Future Work -->
+            <article class="card-institutional p-4">
+                <h2 class="h5 fw-bold text-navy mb-3">5. Scientific Limitations &amp; Future Research</h2>
+                <ul class="text-secondary small ps-3 mb-0">
+                    <li class="mb-2"><strong>Exogenous Weather Covariates:</strong> Ambient temperature variations (cooling/heating degree-days) exert significant non-linear influence on electrical loads. Future work will integrate weather station telemetry.</li>
+                    <li class="mb-2"><strong>Location-Based vs Market-Based Scope 2:</strong> The current prototype relies on location-based grid averages. Integration of power purchase agreements (PPAs) and green tariffs represents an essential next step.</li>
+                    <li class="mb-0"><strong>Scope 3 Upstream Supply Chain:</strong> Embodied carbon in equipment procurement and food services requires hybrid input-output life cycle assessment (LCA) databases.</li>
+                </ul>
+            </article>
+        </div>
+
+        <!-- Sidebar Reference Standards -->
+        <div class="col-lg-4">
+            <div class="card-institutional p-4 mb-4 border-start border-4 border-primary">
+                <h3 class="h6 fw-bold text-navy text-uppercase mb-3">Approved Reference Standards</h3>
+                
+                <div class="mb-3">
+                    <span class="small fw-bold text-navy d-block">1. CEA CO₂ Baseline Database (v19)</span>
+                    <span class="small text-muted d-block">Central Electricity Authority, Ministry of Power, Government of India (Dec 2023).</span>
+                    <span class="small text-primary font-monospace">Factor: 0.716 kg CO₂e/kWh</span>
+                </div>
+                <hr class="my-2">
+                
+                <div class="mb-3">
+                    <span class="small fw-bold text-navy d-block">2. IPCC 2006 Guidelines</span>
+                    <span class="small text-muted d-block">Volume 2 (Energy), Chapter 3 (Mobile Combustion) default values for motor gasoline &amp; diesel oil.</span>
+                    <span class="small text-primary font-monospace">Petrol: 2.31 kg/L &bull; Diesel: 2.68 kg/L</span>
+                </div>
+                <hr class="my-2">
+
+                <div>
+                    <span class="small fw-bold text-navy d-block">3. UK DEFRA / DESNZ 2023</span>
+                    <span class="small text-muted d-block">Government greenhouse gas conversion factors for passenger vehicle and transit mobility.</span>
+                    <span class="small text-primary font-monospace">Bus: 0.089 kg/km &bull; Rail: 0.041 kg/km</span>
+                </div>
+            </div>
+
+            <div class="card-institutional p-4">
+                <h3 class="h6 fw-bold text-navy mb-2">Project Mentorship &amp; Contact</h3>
+                <p class="small text-muted mb-3">
+                    Developed for university CSE/AIML design coursework evaluation.
+                </p>
+                <div class="small text-muted">
+                    <div><strong>Project:</strong> Carbon Ledger Prototype</div>
+                    <div><strong>Version:</strong> v2.0 (Institutional Edition)</div>
+                    <div><strong>Stack:</strong> Python, Flask, SQLite, Scikit-learn, ReportLab</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
