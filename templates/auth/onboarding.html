@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Organisation Profile Setup - Carbon Ledger{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper py-5">
+    <div class="auth-card auth-card-wide">
+        <!-- Progress Indicator -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="badge bg-teal-subtle text-teal fw-semibold px-2 py-1" style="background-color: var(--teal-light); color: var(--teal-accent);">
+                Step 2 of 2: Organisation Profile
+            </span>
+            <a href="{{ url_for('dashboard') }}" class="small text-muted text-decoration-none">Skip for now &rarr;</a>
+        </div>
+
+        <!-- Header -->
+        <div class="auth-header text-start mb-4">
+            <h1 class="auth-heading fs-4">Complete your organisation profile</h1>
+            <p class="auth-subheading">Help Carbon Ledger tailor emission factor libraries and sector-specific decarbonization roadmaps.</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('onboarding') }}" class="auth-form" id="onboardingForm">
+            <!-- Organisation Name -->
+            <div class="mb-3">
+                <label for="organisation_name" class="form-label">Organisation / Institution Name</label>
+                <input type="text" 
+                       class="form-control" 
+                       id="organisation_name" 
+                       name="organisation_name" 
+                       value="{{ user.organisation_name if user else '' }}" 
+                       placeholder="e.g. Apex Institute of Technology">
+            </div>
+
+            <div class="row g-3 mb-3">
+                <!-- Organisation Type -->
+                <div class="col-md-6">
+                    <label for="organisation_type" class="form-label">Organisation Type</label>
+                    <select class="form-select" id="organisation_type" name="organisation_type">
+                        <option value="">Select type...</option>
+                        <option value="University / Educational Institution" {% if user and user.organisation_type == 'University / Educational Institution' %}selected{% endif %}>University / Educational Institution</option>
+                        <option value="Business / Enterprise" {% if user and user.organisation_type == 'Business / Enterprise' %}selected{% endif %}>Business / Enterprise</option>
+                        <option value="Government Organisation" {% if user and user.organisation_type == 'Government Organisation' %}selected{% endif %}>Government Organisation</option>
+                        <option value="Research Institution" {% if user and user.organisation_type == 'Research Institution' %}selected{% endif %}>Research Institution</option>
+                        <option value="Individual User" {% if user and user.organisation_type == 'Individual User' %}selected{% endif %}>Individual User</option>
+                        <option value="Other" {% if user and user.organisation_type == 'Other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+
+                <!-- Country -->
+                <div class="col-md-6">
+                    <label for="country" class="form-label">Country / Jurisdiction</label>
+                    <select class="form-select" id="country" name="country">
+                        <option value="">Select country...</option>
+                        <option value="India" {% if user and user.country == 'India' %}selected{% endif %}>India (CEA Baseline v19)</option>
+                        <option value="United Kingdom" {% if user and user.country == 'United Kingdom' %}selected{% endif %}>United Kingdom (DEFRA / DESNZ)</option>
+                        <option value="United States" {% if user and user.country == 'United States' %}selected{% endif %}>United States (EPA eGRID)</option>
+                        <option value="European Union" {% if user and user.country == 'European Union' %}selected{% endif %}>European Union (EEA Factors)</option>
+                        <option value="Australia" {% if user and user.country == 'Australia' %}selected{% endif %}>Australia (NGA Factors)</option>
+                        <option value="Canada" {% if user and user.country == 'Canada' %}selected{% endif %}>Canada (NIR Factors)</option>
+                        <option value="Global / Other" {% if user and user.country == 'Global / Other' %}selected{% endif %}>Global / IPCC 2006 Reference</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <!-- Sector / Industry -->
+                <div class="col-md-6">
+                    <label for="sector" class="form-label">Industry / Sector</label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="sector" 
+                           name="sector" 
+                           value="{{ user.sector if user else '' }}" 
+                           placeholder="e.g. Higher Education, IT, Logistics">
+                </div>
+
+                <!-- Organisation Size -->
+                <div class="col-md-6">
+                    <label for="org_size" class="form-label">Organisation Size</label>
+                    <select class="form-select" id="org_size" name="org_size">
+                        <option value="">Select size...</option>
+                        <option value="1-50 employees" {% if user and user.org_size == '1-50 employees' %}selected{% endif %}>1 - 50 employees</option>
+                        <option value="51-200 employees" {% if user and user.org_size == '51-200 employees' %}selected{% endif %}>51 - 200 employees</option>
+                        <option value="201-1000 employees" {% if user and user.org_size == '201-1000 employees' %}selected{% endif %}>201 - 1,000 employees</option>
+                        <option value="1000+ employees" {% if user and user.org_size == '1000+ employees' %}selected{% endif %}>1,000+ employees</option>
+                        <option value="Campus & Student Body" {% if user and user.org_size == 'Campus & Student Body' %}selected{% endif %}>Campus & Student Body</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <!-- Reporting Period -->
+                <div class="col-md-6">
+                    <label for="reporting_period" class="form-label">Annual Reporting Period</label>
+                    <select class="form-select" id="reporting_period" name="reporting_period">
+                        <option value="Calendar Year (Jan-Dec)" {% if not user or user.reporting_period == 'Calendar Year (Jan-Dec)' %}selected{% endif %}>Calendar Year (Jan - Dec)</option>
+                        <option value="Financial Year (Apr-Mar)" {% if user and user.reporting_period == 'Financial Year (Apr-Mar)' %}selected{% endif %}>Financial Year (Apr - Mar)</option>
+                        <option value="Academic Year (Jul-Jun)" {% if user and user.reporting_period == 'Academic Year (Jul-Jun)' %}selected{% endif %}>Academic Year (Jul - Jun)</option>
+                    </select>
+                </div>
+
+                <!-- Electricity Source -->
+                <div class="col-md-6">
+                    <label for="electricity_source" class="form-label">Primary Electricity Source</label>
+                    <select class="form-select" id="electricity_source" name="electricity_source">
+                        <option value="Standard Utility Grid" {% if not user or user.electricity_source == 'Standard Utility Grid' %}selected{% endif %}>Standard Utility Grid</option>
+                        <option value="Grid & Solar On-site" {% if user and user.electricity_source == 'Grid & Solar On-site' %}selected{% endif %}>Grid & Solar On-site</option>
+                        <option value="100% Green Power PPA" {% if user and user.electricity_source == '100% Green Power PPA' %}selected{% endif %}>100% Green Power PPA / Renewable</option>
+                        <option value="Captive Thermal / Diesel" {% if user and user.electricity_source == 'Captive Thermal / Diesel' %}selected{% endif %}>Captive Thermal / Diesel</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="auth-btn-submit flex-grow-1" id="saveBtn">
+                    <i class="fa-solid fa-floppy-disk me-1"></i> Save & Go to Dashboard
+                </button>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary px-3 py-2 fw-semibold">
+                    Skip
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+{% block title %}Account & Organisation Settings - Carbon Ledger{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb & Title -->
+    <div class="mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb small text-muted mb-1">
+                <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Account & Settings</li>
+            </ol>
+        </nav>
+        <h1 class="page-title-editorial mb-1">Account & Organisation Settings</h1>
+        <p class="text-secondary small">Manage your personal credentials, organisational metadata, and security settings.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left Sidebar: Profile Summary Card -->
+        <div class="col-lg-4">
+            <div class="profile-card text-center mb-4">
+                <div class="profile-avatar-circle mx-auto mb-3">
+                    {{ user.name[:1] if user and user.name else 'U' }}
+                </div>
+                <h4 class="fw-bold mb-1 text-dark">{{ user.name }}</h4>
+                <p class="text-muted small mb-2">{{ user.email }}</p>
+                <div class="d-inline-block px-3 py-1 rounded-pill bg-light border small text-secondary mb-3">
+                    <i class="fa-solid fa-building me-1 text-primary"></i>
+                    {{ user.organisation_name or 'Independent Researcher' }}
+                </div>
+
+                <hr class="my-3 text-muted">
+
+                <div class="text-start small">
+                    <div class="d-flex justify-content-between py-1 text-secondary">
+                        <span>Account ID:</span>
+                        <span class="fw-semibold text-dark">#{{ user.id }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-1 text-secondary">
+                        <span>Role / Scope:</span>
+                        <span class="badge bg-primary-subtle text-primary fw-semibold">Inventory Manager</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-1 text-secondary">
+                        <span>Organisation Type:</span>
+                        <span class="fw-semibold text-dark">{{ user.organisation_type or 'Not specified' }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-1 text-secondary">
+                        <span>Country:</span>
+                        <span class="fw-semibold text-dark">{{ user.country or 'Global' }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-1 text-secondary">
+                        <span>Member Since:</span>
+                        <span class="text-dark">{{ user.created_at[:10] if user.created_at else 'Active' }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-1 text-secondary">
+                        <span>Last Login:</span>
+                        <span class="text-dark">{{ user.last_login[:16] if user.last_login else 'Current Session' }}</span>
+                    </div>
+                </div>
+
+                <hr class="my-3 text-muted">
+
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm w-100 fw-semibold">
+                    <i class="fa-solid fa-arrow-right-from-bracket me-1"></i> Sign Out
+                </a>
+            </div>
+
+            <!-- Activity Inventory Summary -->
+            <div class="card border-0 shadow-sm p-3 bg-white">
+                <h6 class="fw-bold text-dark mb-2 small text-uppercase tracking-wider">
+                    <i class="fa-solid fa-database text-teal me-1"></i> Inventory Portfolio
+                </h6>
+                <div class="row g-2 text-center mt-1">
+                    <div class="col-6">
+                        <div class="p-2 rounded bg-light border">
+                            <div class="fs-5 fw-bold text-primary">{{ user_records_count }}</div>
+                            <div class="small text-muted" style="font-size: 0.72rem;">Activities Logged</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-2 rounded bg-light border">
+                            <div class="fs-5 fw-bold text-teal">{{ user_tonnes }} t</div>
+                            <div class="small text-muted" style="font-size: 0.72rem;">Total Footprint</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Content: Editable Tabs -->
+        <div class="col-lg-8">
+            <!-- Organisation & Personal Profile Form -->
+            <div class="card border shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h5 class="fw-bold mb-0 fs-6 text-dark">
+                        <i class="fa-solid fa-id-card text-primary me-2"></i>Organisation Profile & Preferences
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('profile') }}">
+                        <input type="hidden" name="action" value="update_profile">
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label fw-semibold small text-secondary">Your Full Name</label>
+                                <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label fw-semibold small text-secondary">Email Address</label>
+                                <input type="email" class="form-control bg-light" id="email" value="{{ user.email }}" readonly title="Email cannot be changed directly">
+                                <span class="form-text small text-muted">Primary account identifier.</span>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="organisation_name" class="form-label fw-semibold small text-secondary">Organisation Name</label>
+                                <input type="text" class="form-control" id="organisation_name" name="organisation_name" value="{{ user.organisation_name or '' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="organisation_type" class="form-label fw-semibold small text-secondary">Organisation Type</label>
+                                <select class="form-select" id="organisation_type" name="organisation_type">
+                                    <option value="">Select type...</option>
+                                    <option value="University / Educational Institution" {% if user.organisation_type == 'University / Educational Institution' %}selected{% endif %}>University / Educational Institution</option>
+                                    <option value="Business / Enterprise" {% if user.organisation_type == 'Business / Enterprise' %}selected{% endif %}>Business / Enterprise</option>
+                                    <option value="Government Organisation" {% if user.organisation_type == 'Government Organisation' %}selected{% endif %}>Government Organisation</option>
+                                    <option value="Research Institution" {% if user.organisation_type == 'Research Institution' %}selected{% endif %}>Research Institution</option>
+                                    <option value="Individual User" {% if user.organisation_type == 'Individual User' %}selected{% endif %}>Individual User</option>
+                                    <option value="Other" {% if user.organisation_type == 'Other' %}selected{% endif %}>Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="country" class="form-label fw-semibold small text-secondary">Country / Region</label>
+                                <select class="form-select" id="country" name="country">
+                                    <option value="">Select country...</option>
+                                    <option value="India" {% if user.country == 'India' %}selected{% endif %}>India (CEA Baseline v19)</option>
+                                    <option value="United Kingdom" {% if user.country == 'United Kingdom' %}selected{% endif %}>United Kingdom (DEFRA / DESNZ)</option>
+                                    <option value="United States" {% if user.country == 'United States' %}selected{% endif %}>United States (EPA eGRID)</option>
+                                    <option value="European Union" {% if user.country == 'European Union' %}selected{% endif %}>European Union (EEA Factors)</option>
+                                    <option value="Australia" {% if user.country == 'Australia' %}selected{% endif %}>Australia (NGA Factors)</option>
+                                    <option value="Canada" {% if user.country == 'Canada' %}selected{% endif %}>Canada (NIR Factors)</option>
+                                    <option value="Global / Other" {% if user.country == 'Global / Other' %}selected{% endif %}>Global / IPCC Reference</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="sector" class="form-label fw-semibold small text-secondary">Industry / Sector</label>
+                                <input type="text" class="form-control" id="sector" name="sector" value="{{ user.sector or '' }}">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label for="org_size" class="form-label fw-semibold small text-secondary">Organisation Size</label>
+                                <select class="form-select" id="org_size" name="org_size">
+                                    <option value="">Select size...</option>
+                                    <option value="1-50 employees" {% if user.org_size == '1-50 employees' %}selected{% endif %}>1 - 50</option>
+                                    <option value="51-200 employees" {% if user.org_size == '51-200 employees' %}selected{% endif %}>51 - 200</option>
+                                    <option value="201-1000 employees" {% if user.org_size == '201-1000 employees' %}selected{% endif %}>201 - 1,000</option>
+                                    <option value="1000+ employees" {% if user.org_size == '1000+ employees' %}selected{% endif %}>1,000+</option>
+                                    <option value="Campus & Student Body" {% if user.org_size == 'Campus & Student Body' %}selected{% endif %}>Campus / Student Body</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="reporting_period" class="form-label fw-semibold small text-secondary">Reporting Period</label>
+                                <select class="form-select" id="reporting_period" name="reporting_period">
+                                    <option value="Calendar Year (Jan-Dec)" {% if user.reporting_period == 'Calendar Year (Jan-Dec)' %}selected{% endif %}>Calendar (Jan - Dec)</option>
+                                    <option value="Financial Year (Apr-Mar)" {% if user.reporting_period == 'Financial Year (Apr-Mar)' %}selected{% endif %}>Financial (Apr - Mar)</option>
+                                    <option value="Academic Year (Jul-Jun)" {% if user.reporting_period == 'Academic Year (Jul-Jun)' %}selected{% endif %}>Academic (Jul - Jun)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="electricity_source" class="form-label fw-semibold small text-secondary">Electricity Source</label>
+                                <select class="form-select" id="electricity_source" name="electricity_source">
+                                    <option value="Standard Utility Grid" {% if user.electricity_source == 'Standard Utility Grid' %}selected{% endif %}>Standard Grid</option>
+                                    <option value="Grid & Solar On-site" {% if user.electricity_source == 'Grid & Solar On-site' %}selected{% endif %}>Grid & Solar</option>
+                                    <option value="100% Green Power PPA" {% if user.electricity_source == '100% Green Power PPA' %}selected{% endif %}>100% Green PPA</option>
+                                    <option value="Captive Thermal / Diesel" {% if user.electricity_source == 'Captive Thermal / Diesel' %}selected{% endif %}>Captive Thermal</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary px-4 fw-semibold">
+                                <i class="fa-solid fa-check me-1"></i> Save Profile Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Password & Security Card -->
+            <div class="card border shadow-sm">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h5 class="fw-bold mb-0 fs-6 text-dark">
+                        <i class="fa-solid fa-lock text-primary me-2"></i>Change Password
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('profile') }}">
+                        <input type="hidden" name="action" value="change_password">
+
+                        <div class="mb-3">
+                            <label for="current_password" class="form-label fw-semibold small text-secondary">Current Password</label>
+                            <input type="password" class="form-control" id="current_password" name="current_password" required autocomplete="current-password">
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="new_password" class="form-label fw-semibold small text-secondary">New Password</label>
+                                <input type="password" class="form-control" id="new_password" name="new_password" required autocomplete="new-password">
+                                <span class="form-text small text-muted">Minimum 8 characters with number or symbol.</span>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="confirm_password" class="form-label fw-semibold small text-secondary">Confirm New Password</label>
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required autocomplete="new-password">
+                            </div>
+                        </div>
+
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-outline-primary px-4 fw-semibold">
+                                <i class="fa-solid fa-key me-1"></i> Update Password
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

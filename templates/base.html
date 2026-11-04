@@ -83,6 +83,32 @@
                     <li class="nav-item">
                         <a class="nav-link nav-link-institutional {% if request.path == '/methodology' %}active{% endif %}" href="/methodology">Methodology</a>
                     </li>
+                    {% if current_user %}
+                    <li class="nav-item dropdown ms-lg-2">
+                        <a class="nav-link dropdown-toggle text-white d-flex align-items-center gap-2 px-2 py-1 rounded" href="#" id="userMenuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: rgba(255, 255, 255, 0.12);">
+                            <span class="user-initial-icon">{{ current_user.name[:1] }}</span>
+                            <span class="small fw-semibold">{{ current_user.name.split(' ')[0] }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userMenuDropdown">
+                            <li class="px-3 py-2 border-bottom">
+                                <div class="fw-bold small text-dark">{{ current_user.name }}</div>
+                                <div class="text-muted text-truncate small" style="max-width: 190px;">{{ current_user.email }}</div>
+                                {% if current_user.organisation_name %}
+                                <div class="badge bg-light text-secondary border small mt-1">{{ current_user.organisation_name }}</div>
+                                {% endif %}
+                            </li>
+                            <li><a class="dropdown-item py-2 small" href="/profile"><i class="fa-solid fa-gear me-2 text-primary"></i>Account & Settings</a></li>
+                            <li><a class="dropdown-item py-2 small" href="/onboarding"><i class="fa-solid fa-building me-2 text-teal"></i>Organisation Profile</a></li>
+                            <li><hr class="dropdown-divider my-1"></li>
+                            <li><a class="dropdown-item py-2 small text-danger" href="/logout"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Sign Out</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item ms-lg-2 d-flex align-items-center gap-2">
+                        <a class="btn btn-sm text-white px-2 py-1" href="/login">Sign In</a>
+                        <a class="btn btn-sm btn-light text-primary fw-semibold px-2 py-1" href="/register">Register</a>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>

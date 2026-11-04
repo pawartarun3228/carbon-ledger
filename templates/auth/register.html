@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+
+{% block title %}Create Account - Carbon Ledger{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card auth-card-wide">
+        <!-- Logo & Header -->
+        <div class="auth-header">
+            <div class="auth-brand-badge" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke-width="1.5"/>
+                    <path d="M2 12h20" stroke-width="1.5"/>
+                </svg>
+            </div>
+            <h1 class="auth-heading">Create your account</h1>
+            <p class="auth-subheading">Track institutional greenhouse gas emissions and model verifiable net-zero pathways.</p>
+        </div>
+
+        <!-- Registration Form -->
+        <form method="POST" action="{{ url_for('register') }}" class="auth-form" id="registerForm" novalidate>
+            <!-- Full Name -->
+            <div class="mb-3">
+                <label for="name" class="form-label">Full name <span class="text-danger">*</span></label>
+                <input type="text" 
+                       class="form-control" 
+                       id="name" 
+                       name="name" 
+                       value="{{ name or '' }}" 
+                       placeholder="e.g. Dr. Alex Mercer" 
+                       required 
+                       autocomplete="name" 
+                       autofocus>
+                <div class="invalid-feedback" id="nameFeedback">Please provide your full name.</div>
+            </div>
+
+            <!-- Email Address -->
+            <div class="mb-3">
+                <label for="email" class="form-label">Email address <span class="text-danger">*</span></label>
+                <input type="email" 
+                       class="form-control" 
+                       id="email" 
+                       name="email" 
+                       value="{{ email or '' }}" 
+                       placeholder="name@organisation.org" 
+                       required 
+                       autocomplete="email">
+                <div class="invalid-feedback" id="emailFeedback">Please enter a valid institutional or personal email address.</div>
+            </div>
+
+            <!-- Password Fields Grid -->
+            <div class="row g-2 mb-3">
+                <div class="col-md-6">
+                    <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                    <div class="auth-input-group">
+                        <input type="password" 
+                               class="form-control" 
+                               id="password" 
+                               name="password" 
+                               placeholder="Min. 8 characters" 
+                               required 
+                               autocomplete="new-password">
+                        <button type="button" class="auth-toggle-pwd-btn" id="togglePasswordBtn" title="Toggle password visibility" aria-label="Toggle password visibility">
+                            <i class="fa-regular fa-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                    <div class="pwd-strength-bar">
+                        <div class="pwd-strength-fill" id="pwdStrengthFill"></div>
+                    </div>
+                    <div class="pwd-strength-text" id="pwdStrengthText">Use 8+ characters with a number or symbol.</div>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="confirm_password" class="form-label">Confirm password <span class="text-danger">*</span></label>
+                    <input type="password" 
+                           class="form-control" 
+                           id="confirm_password" 
+                           name="confirm_password" 
+                           placeholder="Re-enter password" 
+                           required 
+                           autocomplete="new-password">
+                    <div class="invalid-feedback" id="confirmFeedback">Passwords do not match.</div>
+                </div>
+            </div>
+
+            <!-- Optional Organisation Information Accordion -->
+            <div class="card border mb-3 bg-light-subtle">
+                <div class="card-header bg-transparent py-2 d-flex justify-content-between align-items-center" 
+                     role="button" 
+                     data-bs-toggle="collapse" 
+                     data-bs-target="#optionalOrgFields" 
+                     aria-expanded="false" 
+                     aria-controls="optionalOrgFields">
+                    <span class="small fw-semibold text-secondary">
+                        <i class="fa-solid fa-building me-1 text-primary"></i> Organisation Details <span class="fw-normal text-muted">(Optional)</span>
+                    </span>
+                    <i class="fa-solid fa-chevron-down small text-muted"></i>
+                </div>
+                <div class="collapse" id="optionalOrgFields">
+                    <div class="card-body py-3">
+                        <div class="mb-2">
+                            <label for="organisation_name" class="form-label">Organisation Name</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="organisation_name" 
+                                   name="organisation_name" 
+                                   value="{{ organisation_name or '' }}" 
+                                   placeholder="e.g. Cambridge Clean Energy Labs">
+                        </div>
+                        <div>
+                            <label for="organisation_type" class="form-label">Organisation Type</label>
+                            <select class="form-select" id="organisation_type" name="organisation_type">
+                                <option value="" selected>Select type (optional)...</option>
+                                <option value="University / Educational Institution" {% if organisation_type == 'University / Educational Institution' %}selected{% endif %}>University / Educational Institution</option>
+                                <option value="Business / Enterprise" {% if organisation_type == 'Business / Enterprise' %}selected{% endif %}>Business / Enterprise</option>
+                                <option value="Government Organisation" {% if organisation_type == 'Government Organisation' %}selected{% endif %}>Government Organisation</option>
+                                <option value="Research Institution" {% if organisation_type == 'Research Institution' %}selected{% endif %}>Research Institution</option>
+                                <option value="Individual User" {% if organisation_type == 'Individual User' %}selected{% endif %}>Individual User</option>
+                                <option value="Other" {% if organisation_type == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="auth-btn-submit" id="submitBtn">
+                <span class="spinner-border spinner-border-sm d-none" id="submitSpinner" role="status" aria-hidden="true"></span>
+                <span id="submitText">Create Account</span>
+            </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="auth-divider">
+            <span>Or continue with</span>
+        </div>
+
+        <!-- Google Register Option -->
+        <a href="{{ url_for('google_demo_login') }}" class="auth-btn-google">
+            <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.616z" fill="#4285F4"/>
+                <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/>
+                <path d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.039l3.007-2.332z" fill="#FBBC05"/>
+                <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/>
+            </svg>
+            <span>Sign up with Google</span>
+        </a>
+
+        <!-- Sign In Prompt -->
+        <div class="auth-footer-prompt">
+            Already have an account? <a href="{{ url_for('login') }}">Sign in</a>
+        </div>
+
+        <!-- Legal Notice -->
+        <div class="auth-legal-footer">
+            By creating an account, you agree to Carbon Ledger's 
+            <a href="{{ url_for('methodology') }}">Methodology Framework</a> and academic terms.
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const toggleBtn = document.getElementById('togglePasswordBtn');
+    const passwordInput = document.getElementById('password');
+    const confirmInput = document.getElementById('confirm_password');
+    const toggleIcon = document.getElementById('toggleIcon');
+    const strengthFill = document.getElementById('pwdStrengthFill');
+    const strengthText = document.getElementById('pwdStrengthText');
+    const form = document.getElementById('registerForm');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const submitBtn = document.getElementById('submitBtn');
+    const submitSpinner = document.getElementById('submitSpinner');
+    const submitText = document.getElementById('submitText');
+
+    // Show/hide password
+    if (toggleBtn && passwordInput) {
+        toggleBtn.addEventListener('click', function () {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        });
+    }
+
+    // Dynamic password strength evaluation
+    if (passwordInput && strengthFill) {
+        passwordInput.addEventListener('input', function () {
+            const val = passwordInput.value;
+            let score = 0;
+            if (val.length >= 8) score += 1;
+            if (val.length >= 12) score += 1;
+            if (/[0-9]/.test(val)) score += 1;
+            if (/[^A-Za-z0-9]/.test(val)) score += 1;
+
+            if (val.length === 0) {
+                strengthFill.style.width = '0%';
+                strengthFill.style.backgroundColor = '#e2e8f0';
+                strengthText.textContent = 'Use 8+ characters with a number or symbol.';
+                strengthText.style.color = '#64748b';
+            } else if (score <= 1) {
+                strengthFill.style.width = '25%';
+                strengthFill.style.backgroundColor = '#dc2626';
+                strengthText.textContent = 'Weak: needs at least 8 characters and a number or symbol.';
+                strengthText.style.color = '#dc2626';
+            } else if (score === 2) {
+                strengthFill.style.width = '50%';
+                strengthFill.style.backgroundColor = '#d97706';
+                strengthText.textContent = 'Fair: add special characters for better strength.';
+                strengthText.style.color = '#d97706';
+            } else if (score === 3) {
+                strengthFill.style.width = '75%';
+                strengthFill.style.backgroundColor = '#0d9488';
+                strengthText.textContent = 'Good strength password.';
+                strengthText.style.color = '#0d9488';
+            } else {
+                strengthFill.style.width = '100%';
+                strengthFill.style.backgroundColor = '#15803d';
+                strengthText.textContent = 'Strong password.';
+                strengthText.style.color = '#15803d';
+            }
+        });
+    }
+
+    // Form validation
+    if (form) {
+        form.addEventListener('submit', function (e) {
+            let isValid = true;
+            nameInput.classList.remove('is-invalid');
+            emailInput.classList.remove('is-invalid');
+            passwordInput.classList.remove('is-invalid');
+            confirmInput.classList.remove('is-invalid');
+
+            if (!nameInput.value.trim()) {
+                nameInput.classList.add('is-invalid');
+                isValid = false;
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailInput.value.trim() || !emailRegex.test(emailInput.value.trim())) {
+                emailInput.classList.add('is-invalid');
+                isValid = false;
+            }
+
+            if (!passwordInput.value || passwordInput.value.length < 8) {
+                passwordInput.classList.add('is-invalid');
+                isValid = false;
+            }
+
+            if (passwordInput.value !== confirmInput.value) {
+                confirmInput.classList.add('is-invalid');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitSpinner.classList.remove('d-none');
+            submitText.textContent = 'Creating account...';
+        });
+    }
+});
+</script>
+{% endblock %}

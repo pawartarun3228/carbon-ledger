@@ -18,7 +18,18 @@ Carbon Ledger is built in an **editorial, institutional design style inspired by
 
 ## 2. Core Application Modules
 
-### A. Executive Sustainability Dashboard (`/dashboard`)
+### A. Authentication, User Management & Onboarding
+- **ChatGPT-Inspired Minimalist Auth Interface:** Clean, distraction-free authentication cards in an institutional palette (`#004f98`, `#0b2545`, `#0d9488`, `#f8fafc`).
+- **Secure Password Hashing:** Cryptographic password hashing powered by Werkzeug (`scrypt`/`pbkdf2:sha256`) with password strength checks (min. 8 characters + digits/symbols).
+- **Session Security:** Server-side sessions with `HttpOnly`, `SameSite=Lax`, permanent session lifetime (7 days for "Remember Me"), and secure session destruction upon logout.
+- **Brute-Force Rate Limiting:** In-memory request throttling restricts repeated failed login attempts (max 5 failures per 5 minutes per IP/account).
+- **User-Level Data Isolation:** Every activity record, net-zero baseline, scenario, and generated report is isolated by authenticated `user_id`.
+- **Organisation Profile Onboarding (`/onboarding`):** Guided post-registration setup collecting institutional metadata (Name, Sector, Organisation Type, Country jurisdiction, Reporting Period, Electricity Source) with optional skipping.
+- **Account & Security Settings (`/profile`):** Comprehensive user dashboard to manage personal information, update institutional profiles, change passwords securely, and audit activity statistics.
+- **Password Recovery Workflow (`/forgot-password`):** Time-limited (1-hour), single-use reset tokens generated with `itsdangerous` and verified via SHA-256 database hashes. Features transparent development fallback when outbound SMTP (`MAIL_SERVER`) is unconfigured.
+- **One-Click Demo & Google SSO:** Direct 1-click evaluation sign-in for the pre-seeded Demo User (`demo@example.com` / `Demo@1234`) and simulated Google Workspace SSO profile (`/google-demo-login`).
+
+### B. Executive Sustainability Dashboard (`/dashboard`)
 - **Total Emissions:** Dynamic calculations reported in both kilograms (kg CO₂e) and metric tonnes (t CO₂e).
 - **Period Filter:** Custom monthly range filtering (`date_from` to `date_to`).
 - **Breakdown Analytics:** Interactive Chart.js Doughnut chart and monthly timeline chart.
@@ -150,7 +161,7 @@ Carbon Ledger strictly documents three distinct datasets:
 
 ## 6. Automated Testing & Verification
 
-Run the complete test suite (101 automated tests):
+Run the complete test suite (118 automated tests):
 ```powershell
 .\venv\Scripts\python.exe -m pytest --rootdir="." tests/ -v
 ```
@@ -161,13 +172,14 @@ Run the complete test suite (101 automated tests):
 platform win32 -- Python 3.14.2, pytest-9.1.1, pluggy-1.6.0
 rootdir: C:\Users\VRtar\.gemini\antigravity\scratch\carbon-emission-platform
 configfile: pytest.ini
-collected 101 items
+collected 118 items
 
-tests\test_app.py ...........................................            [ 42%]
-tests\test_platform_features.py ........................................ [ 82%]
+tests\test_app.py ...........................................            [ 36%]
+tests\test_auth.py .................                                     [ 50%]
+tests\test_platform_features.py ........................................ [ 84%]
 ..................                                                       [100%]
 
-============================= 101 passed in 7.32s =============================
+============================ 118 passed in 13.46s =============================
 ```
 
 ---
@@ -234,6 +246,7 @@ carbon-emission-platform/
 │
 ├── services/
 │   ├── __init__.py
+│   ├── auth.py                     # Werkzeug hashing, token resets, rate limiting & @login_required
 │   ├── emission_calculator.py      # Core CO2e calculation & unit checking
 │   ├── factor_registry.py          # Factor catalog & unit conversions
 │   ├── data_validation.py          # Activity entry & CSV validation
@@ -246,7 +259,7 @@ carbon-emission-platform/
 │   └── report_generator.py         # ReportLab PDF & CSV exports
 │
 ├── templates/
-│   ├── base.html                   # UN-inspired institutional base layout
+│   ├── base.html                   # UN-inspired institutional base layout & user dropdown
 │   ├── index.html                  # Landing page with core pillars
 │   ├── dashboard.html              # Executive analytics dashboard
 │   ├── history.html                # Activity management, CSV upload & AI anomaly review
@@ -257,21 +270,29 @@ carbon-emission-platform/
 │   ├── recommendations.html        # Prioritized decarbonization advice
 │   ├── net_zero.html               # Net-Zero scenario simulator & roadmap
 │   ├── reports.html                # Reporting center & export downloads
-│   └── methodology.html            # Research methodology & architecture
+│   ├── methodology.html            # Research methodology & architecture
+│   ├── profile.html                # User account & organisation settings
+│   └── auth/
+│       ├── login.html              # Minimalist ChatGPT-style sign in
+│       ├── register.html           # Account registration with password strength meter
+│       ├── forgot_password.html    # Password recovery token generation
+│       ├── reset_password.html     # Single-use password reset form
+│       └── onboarding.html         # Guided organisation profile setup
 │
 ├── static/
 │   ├── css/
-│   │   └── style.css               # UN institutional editorial stylesheet
+│   │   └── style.css               # UN institutional editorial & minimalist auth styles
 │   └── js/
 │       └── dashboard.js            # Chart.js & interactive simulation logic
 │
 ├── docs/
 │   ├── methodology.md              # Environmental accounting methodology
 │   ├── architecture.md             # System architecture & database schema
-│   ├── testing.md                  # Test execution report (101 tests)
+│   ├── testing.md                  # Test execution report (118 tests)
 │   └── research_report.md          # AIML time-series forecasting research
 │
 └── tests/
     ├── test_app.py                 # Baseline test suite (43 tests)
+    ├── test_auth.py                # Comprehensive authentication test suite (17 tests)
     └── test_platform_features.py   # Advanced platform features suite (58 tests)
 ```
