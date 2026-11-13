@@ -1,36 +1,79 @@
 /**
- * Carbon Ledger - UN-Inspired Institutional Design System
- * Visual Palette: Deep UN Blue (#004f98), Navy (#0b2545), Slate (#1e293b), 
- * Neutral Off-White (#f8fafc), Soft Gray (#e2e8f0), Restrained Teal (#0d9488)
- * Typography: Editorial serif/sans pairing, generous whitespace, strict grid.
- * Avoids neon, glassmorphism, gratuitous gradients, and heavy rounded cards.
+ * Carbon Ledger - Apple Design System
+ * Measured from apple.com specification:
+ * - Palette: Snow (#F5F5F7), Charcoal (#1D1D1F), Graphite (#313131), Muted (#444445), White (#FFFFFF)
+ * - Brand Accent: Dark Orange (#822704)
+ * - Primary Actions: Vivid Apple Blue (#0071E3), hover (#0076DF), Link Blue (#0066CC)
+ * - Typography: SF Pro Display & SF Pro Text (-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text")
+ * - Shapes: Pill-shaped controls (9999px radius), flat tonal surface elevation (no drop shadows)
+ * - Borders: Hairline translucent borders (#00000029 / rgba(0,0,0,0.12))
  */
 
 :root {
-    --un-blue: #004f98;
-    --un-blue-dark: #003666;
-    --un-blue-light: #e6f0fa;
-    --navy-primary: #0b2545;
-    --slate-dark: #1e293b;
-    --slate-text: #334155;
-    --muted-gray: #64748b;
-    --light-bg: #f8fafc;
-    --card-bg: #ffffff;
-    --border-subtle: #e2e8f0;
-    --border-strong: #cbd5e1;
-    --teal-accent: #0d9488;
-    --teal-light: #f0fdfa;
-    --amber-warning: #d97706;
-    --amber-light: #fffbeb;
-    --red-alert: #dc2626;
-    --red-light: #fef2f2;
-    --green-success: #15803d;
-    --green-light: #f0fdf4;
-    --font-heading: 'Georgia', 'Cambria', 'Times New Roman', serif;
-    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-    --shadow-subtle: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
-    --shadow-card: 0 2px 4px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
+    /* Apple Palette */
+    --apple-snow: #F5F5F7;
+    --apple-charcoal: #1D1D1F;
+    --apple-graphite: #313131;
+    --apple-muted: #444445;
+    --apple-white: #FFFFFF;
+    --apple-overlay: rgba(0, 0, 0, 0.48);          /* #0000007A */
+    --apple-overlay-strong: rgba(210, 210, 215, 0.64); /* #D2D2D7A3 */
+    --apple-outline: rgba(0, 0, 0, 0.16);         /* #00000029 */
+    --apple-outline-subtle: rgba(0, 0, 0, 0.08);
+    --apple-primary: #822704;                     /* Dark Orange Brand Accent */
+    --apple-on-primary: #FFFFFF;
+    --apple-secondary: #0071E3;                   /* Vivid Apple Blue */
+    --apple-secondary-hover: #0076DF;
+    --apple-tertiary: #0066CC;                    /* Apple Link Blue */
+    --apple-inverse-surface: #000000;
+
+    /* Semantic Aliases */
+    --bg-page: var(--apple-snow);
+    --card-bg: var(--apple-white);
+    --text-primary: var(--apple-charcoal);
+    --text-secondary: var(--apple-graphite);
+    --text-muted: var(--apple-muted);
+    --border-subtle: var(--apple-outline-subtle);
+    --border-strong: var(--apple-outline);
+
+    /* Backwards-compatibility variables with Apple mapping */
+    --un-blue: var(--apple-secondary);
+    --un-blue-dark: var(--apple-secondary-hover);
+    --un-blue-light: #E5F2FF;
+    --navy-primary: var(--apple-charcoal);
+    --slate-dark: var(--apple-charcoal);
+    --slate-text: var(--apple-graphite);
+    --muted-gray: var(--apple-muted);
+    --light-bg: var(--apple-snow);
+    --teal-accent: #0071E3;
+    --teal-light: #E5F2FF;
+    --amber-warning: #FF9500;
+    --amber-light: #FFF4E5;
+    --red-alert: #FF3B30;
+    --red-light: #FFECEB;
+    --green-success: #34C759;
+    --green-light: #E8F8ED;
+
+    /* Apple SF Pro Typography Stack */
+    --font-heading: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-mono: "SF Mono", SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+
+    /* Radii - Apple Pill Language */
+    --radius-pill: 9999px;
+    --radius-card: 18px;
+    --radius-card-sm: 12px;
+    --radius-control: 12px;
+
+    /* Transitions */
+    --ease-apple: cubic-bezier(0.4, 0, 0.6, 1);
+    --transition-fast: 0.1s var(--ease-apple);
+    --transition-med: 0.25s var(--ease-apple);
+    --transition-normal: 0.32s var(--ease-apple);
+
+    /* Shadows: Apple design is flat, depth via tonal surfaces steps and crisp hairlines */
+    --shadow-subtle: none;
+    --shadow-card: none;
 }
 
 /* Accessibility & Reset */
@@ -39,20 +82,22 @@
 }
 
 body {
-    background-color: var(--light-bg);
-    color: var(--slate-text);
+    background-color: var(--apple-snow);
+    color: var(--apple-charcoal);
     font-family: var(--font-sans);
-    font-size: 0.95rem;
-    line-height: 1.6;
+    font-size: 15px;
+    line-height: 1.47;
     margin: 0;
     padding: 0;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 :focus-visible {
-    outline: 2px solid var(--un-blue);
+    outline: 2px solid var(--apple-secondary);
     outline-offset: 2px;
 }
 
@@ -60,151 +105,187 @@ body {
     position: absolute;
     top: -40px;
     left: 10px;
-    background: var(--navy-primary);
+    background: var(--apple-charcoal);
     color: white;
-    padding: 8px 16px;
+    padding: 8px 18px;
     z-index: 1000;
     text-decoration: none;
-    font-weight: 600;
-    border-radius: 2px;
-    transition: top 0.2s;
+    font-weight: 500;
+    border-radius: var(--radius-pill);
+    transition: top var(--transition-med);
 }
 
 .skip-to-content:focus {
     top: 10px;
 }
 
-/* Top Institutional Banner */
+/* ==========================================================================
+   Navigation & Apple Header (Frosted Glass & Pill Controls)
+   ========================================================================== */
+
+/* Top Identifier Bar */
 .top-notice-bar {
-    background-color: var(--navy-primary);
-    color: #94a3b8;
-    font-size: 0.75rem;
-    padding: 6px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+    background-color: #ECECED;
+    color: var(--apple-muted);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--apple-outline-subtle);
+    letter-spacing: -0.01em;
 }
 
 .top-notice-bar strong {
-    color: #e2e8f0;
+    color: var(--apple-charcoal);
+    font-weight: 600;
 }
 
-/* Navbar */
+/* Translucent Apple Navbar */
 .navbar-institutional {
-    background-color: #ffffff;
-    border-bottom: 2px solid var(--un-blue);
-    box-shadow: var(--shadow-subtle);
-    padding: 12px 0;
+    background: rgba(245, 245, 247, 0.85);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    padding: 10px 0;
+    transition: background-color var(--transition-med);
 }
 
 .brand-wrapper {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     text-decoration: none;
 }
 
 .brand-icon {
-    width: 38px;
-    height: 38px;
-    background: var(--un-blue);
-    color: white;
+    width: 34px;
+    height: 34px;
+    background: var(--apple-primary); /* Apple Dark Orange Accent */
+    color: #FFFFFF;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 4px;
+    border-radius: 9px;
+    box-shadow: 0 1px 3px rgba(130, 39, 4, 0.2);
+    transition: transform var(--transition-fast);
+}
+
+.brand-wrapper:hover .brand-icon {
+    transform: scale(1.04);
 }
 
 .brand-icon svg {
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
     fill: currentColor;
 }
 
 .brand-title {
     font-family: var(--font-heading);
-    font-size: 1.35rem;
-    font-weight: 700;
-    color: var(--navy-primary);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--apple-charcoal);
     line-height: 1.1;
     margin: 0;
+    letter-spacing: -0.02em;
 }
 
 .brand-subtitle {
-    font-size: 0.72rem;
-    color: var(--muted-gray);
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+    font-size: 11px;
+    color: var(--apple-muted);
+    letter-spacing: -0.01em;
     display: block;
+    font-weight: 400;
 }
 
 .nav-link-institutional {
-    color: var(--slate-dark) !important;
-    font-weight: 500;
-    font-size: 0.88rem;
-    padding: 8px 12px !important;
-    border-radius: 3px;
-    transition: color 0.15s, background-color 0.15s;
+    color: var(--apple-graphite) !important;
+    font-weight: 400;
+    font-size: 14px;
+    letter-spacing: -0.016em;
+    padding: 6px 14px !important;
+    border-radius: var(--radius-pill);
+    transition: color var(--transition-fast), background-color var(--transition-fast);
+    margin: 0 2px;
 }
 
 .nav-link-institutional:hover {
-    color: var(--un-blue) !important;
-    background-color: var(--un-blue-light);
+    color: var(--apple-secondary) !important;
+    background-color: rgba(0, 0, 0, 0.04);
 }
 
 .nav-link-institutional.active {
-    color: var(--un-blue) !important;
-    font-weight: 700;
-    border-bottom: 2px solid var(--un-blue);
-    background-color: transparent;
+    color: var(--apple-charcoal) !important;
+    font-weight: 600;
+    background-color: rgba(0, 0, 0, 0.06);
 }
 
-/* Page Header & Editorial Titles */
+/* ==========================================================================
+   Apple Typography & Editorial Headings
+   ========================================================================== */
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    color: var(--apple-charcoal);
+    letter-spacing: -0.015em;
+}
+
 .page-header-editorial {
     padding: 32px 0 20px 0;
-    border-bottom: 1px solid var(--border-subtle);
-    margin-bottom: 28px;
+    border-bottom: 1px solid var(--apple-outline-subtle);
+    margin-bottom: 24px;
 }
 
 .page-category-label {
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: var(--un-blue);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--apple-primary); /* Apple Dark Orange */
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 0.04em;
     margin-bottom: 6px;
     display: block;
 }
 
 .page-title-editorial {
     font-family: var(--font-heading);
-    font-size: 2.1rem;
-    color: var(--navy-primary);
-    font-weight: 700;
-    line-height: 1.2;
+    font-size: 40px; /* headline-lg: 40px/600 */
+    color: var(--apple-charcoal);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
     margin: 0 0 8px 0;
 }
 
 .page-lead-editorial {
-    font-size: 1.05rem;
-    color: var(--muted-gray);
+    font-size: 17px; /* label-md / body */
+    color: var(--apple-graphite);
     max-width: 820px;
     margin: 0;
+    line-height: 1.47;
+    letter-spacing: -0.022em;
 }
 
-/* Institutional Cards */
+/* ==========================================================================
+   Apple Flat Tonal Cards & Surface Containers
+   ========================================================================== */
+
+.card,
 .card-institutional {
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-subtle);
-    border-radius: 4px;
-    box-shadow: var(--shadow-card);
-    margin-bottom: 24px;
+    background-color: var(--apple-white);
+    border: 1px solid var(--apple-outline);
+    border-radius: var(--radius-card);
+    box-shadow: none; /* Flat Apple hierarchy */
+    margin-bottom: 21px;
+    transition: border-color var(--transition-med);
+}
+
+.card-institutional:hover {
+    border-color: rgba(0, 0, 0, 0.22);
 }
 
 .card-institutional-header {
-    background-color: #ffffff;
-    border-bottom: 1px solid var(--border-subtle);
-    padding: 14px 20px;
+    background-color: transparent;
+    border-bottom: 1px solid var(--apple-outline-subtle);
+    padding: 18px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -212,150 +293,290 @@ body {
 
 .card-institutional-title {
     font-family: var(--font-heading);
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: var(--navy-primary);
+    font-size: 21px;
+    font-weight: 600;
+    color: var(--apple-charcoal);
     margin: 0;
+    letter-spacing: -0.015em;
 }
 
 .card-institutional-body {
-    padding: 20px;
+    padding: 24px;
 }
 
-/* Stat & KPI Cards */
+/* ==========================================================================
+   Apple KPI Metric Cards
+   ========================================================================== */
+
 .kpi-card {
-    background-color: #ffffff;
-    border: 1px solid var(--border-subtle);
-    border-top: 3px solid var(--un-blue);
-    border-radius: 4px;
-    padding: 20px;
-    box-shadow: var(--shadow-subtle);
+    background-color: var(--apple-white);
+    border: 1px solid var(--apple-outline);
+    border-radius: var(--radius-card);
+    padding: 22px 24px;
+    box-shadow: none;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    transition: transform var(--transition-fast), border-color var(--transition-fast);
 }
 
-.kpi-card.kpi-secondary {
-    border-top-color: var(--teal-accent);
-}
-
-.kpi-card.kpi-warning {
-    border-top-color: var(--amber-warning);
-}
-
-.kpi-card.kpi-navy {
-    border-top-color: var(--navy-primary);
+.kpi-card:hover {
+    border-color: rgba(0, 0, 0, 0.24);
+    transform: translateY(-1px);
 }
 
 .kpi-label {
-    font-size: 0.78rem;
+    font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--muted-gray);
+    letter-spacing: 0.02em;
+    color: var(--apple-muted);
     margin-bottom: 8px;
 }
 
 .kpi-value {
     font-family: var(--font-heading);
-    font-size: 2.1rem;
-    font-weight: 700;
-    color: var(--navy-primary);
-    line-height: 1.1;
-    margin-bottom: 4px;
+    font-size: 34px; /* headline-md: 34px/600 */
+    font-weight: 600;
+    color: var(--apple-charcoal);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
 }
 
 .kpi-subtext {
-    font-size: 0.82rem;
-    color: var(--muted-gray);
+    font-size: 13px;
+    color: var(--apple-graphite);
     margin: 0;
+    letter-spacing: -0.01em;
 }
 
-/* Badges & Pills */
+.kpi-card.kpi-secondary {
+    border-left: 3px solid var(--apple-secondary);
+}
+
+.kpi-card.kpi-warning {
+    border-left: 3px solid var(--apple-primary);
+}
+
+.kpi-card.kpi-navy {
+    border-left: 3px solid var(--apple-charcoal);
+}
+
+/* ==========================================================================
+   Apple Pill Buttons & Controls (Radius: 9999px)
+   ========================================================================== */
+
+/* Global Button Defaults (Apple Pill Language) */
+.btn {
+    border-radius: var(--radius-pill) !important;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    padding: 8px 18px;
+    transition: all var(--transition-med);
+}
+
+.btn-danger,
+.btn-outline-danger {
+    border-radius: var(--radius-pill) !important;
+}
+
+/* Button Primary: Apple Vivid Blue Pill */
+.btn-un-primary,
+.btn-primary,
+.btn-apple-primary,
+.auth-btn-submit {
+    background-color: var(--apple-secondary) !important;
+    color: var(--apple-on-primary) !important;
+    border: 1px solid var(--apple-secondary) !important;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: -0.015em;
+    padding: 10px 22px;
+    border-radius: var(--radius-pill) !important;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: none;
+    transition: background-color var(--transition-med), transform var(--transition-fast);
+}
+
+.btn-un-primary:hover,
+.btn-primary:hover,
+.btn-apple-primary:hover,
+.auth-btn-submit:hover {
+    background-color: var(--apple-secondary-hover) !important;
+    border-color: var(--apple-secondary-hover) !important;
+    color: #FFFFFF !important;
+}
+
+.btn-un-primary:active,
+.btn-primary:active,
+.auth-btn-submit:active {
+    transform: scale(0.98);
+}
+
+/* Button Outline: Apple Link Blue Pill */
+.btn-un-outline,
+.btn-outline-primary,
+.btn-apple-outline {
+    background-color: transparent !important;
+    color: var(--apple-tertiary) !important;
+    border: 1px solid var(--apple-tertiary) !important;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: -0.015em;
+    padding: 9px 20px;
+    border-radius: var(--radius-pill) !important;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all var(--transition-med);
+}
+
+.btn-un-outline:hover,
+.btn-outline-primary:hover,
+.btn-apple-outline:hover {
+    background-color: var(--apple-secondary-hover) !important;
+    color: #FFFFFF !important;
+    border-color: var(--apple-secondary-hover) !important;
+}
+
+/* Button Secondary: Subtle Gray Pill */
+.btn-un-secondary,
+.btn-secondary,
+.btn-outline-secondary {
+    background-color: #E8E8ED !important;
+    color: var(--apple-charcoal) !important;
+    border: 1px solid transparent !important;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: -0.01em;
+    padding: 8px 18px;
+    border-radius: var(--radius-pill) !important;
+    transition: background-color var(--transition-med);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-un-secondary:hover,
+.btn-secondary:hover,
+.btn-outline-secondary:hover {
+    background-color: #D2D2D7 !important;
+    color: var(--apple-charcoal) !important;
+}
+
+/* Apple Pill Badges */
+.badge {
+    border-radius: var(--radius-pill) !important;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: -0.01em;
+    padding: 4px 12px;
+}
+
 .badge-scope {
-    font-size: 0.72rem;
+    font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 3px 8px;
-    border-radius: 2px;
+    letter-spacing: 0.02em;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
 }
 
 .badge-scope-1 {
-    background-color: #fee2e2;
-    color: #991b1b;
-    border: 1px solid #fecaca;
+    background-color: var(--red-light);
+    color: #C91D12;
+    border: 1px solid rgba(255, 59, 48, 0.2);
 }
 
 .badge-scope-2 {
-    background-color: #e0f2fe;
-    color: #0369a1;
-    border: 1px solid #bae6fd;
+    background-color: var(--un-blue-light);
+    color: var(--apple-secondary);
+    border: 1px solid rgba(0, 113, 227, 0.2);
 }
 
 .badge-scope-3 {
-    background-color: #fef3c7;
-    color: #92400e;
-    border: 1px solid #fde68a;
+    background-color: var(--amber-light);
+    color: #B25E00;
+    border: 1px solid rgba(255, 149, 0, 0.2);
 }
 
 .badge-priority-critical {
-    background-color: #fef2f2;
-    color: #b91c1c;
-    border: 1px solid #fca5a5;
-    font-weight: 700;
+    background-color: var(--red-light);
+    color: #C91D12;
+    border: 1px solid rgba(255, 59, 48, 0.3);
 }
 
 .badge-priority-high {
-    background-color: #fff7ed;
-    color: #c2410c;
-    border: 1px solid #fed7aa;
-    font-weight: 700;
+    background-color: #FFF2E8;
+    color: var(--apple-primary);
+    border: 1px solid rgba(130, 39, 4, 0.25);
 }
 
 .badge-priority-medium {
-    background-color: #fefce8;
-    color: #854d0e;
-    border: 1px solid #fef08a;
+    background-color: var(--amber-light);
+    color: #B25E00;
+    border: 1px solid rgba(255, 149, 0, 0.25);
 }
 
 .badge-priority-low {
-    background-color: #f0fdf4;
-    color: #166534;
-    border: 1px solid #bbf7d0;
+    background-color: var(--green-light);
+    color: #1E7E34;
+    border: 1px solid rgba(52, 199, 89, 0.25);
 }
 
-/* Institutional Tables */
+/* ==========================================================================
+   Apple Flat Clean Tables
+   ========================================================================== */
+
 .table-institutional {
     width: 100%;
     margin-bottom: 0;
-    color: var(--slate-text);
-    border-collapse: collapse;
+    color: var(--apple-charcoal);
+    border-collapse: separate;
+    border-spacing: 0;
 }
 
 .table-institutional th {
-    background-color: #f1f5f9;
-    color: var(--slate-dark);
-    font-size: 0.78rem;
-    font-weight: 700;
+    background-color: #FBFBFC;
+    color: var(--apple-muted);
+    font-size: 12px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.8px;
-    padding: 10px 14px;
-    border-bottom: 2px solid var(--border-strong);
+    letter-spacing: 0.02em;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--apple-outline);
     border-top: none;
     vertical-align: middle;
 }
 
 .table-institutional td {
-    padding: 12px 14px;
-    border-bottom: 1px solid var(--border-subtle);
-    font-size: 0.88rem;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--apple-outline-subtle);
+    font-size: 14px;
+    color: var(--apple-graphite);
     vertical-align: middle;
 }
 
 .table-institutional tbody tr:hover {
-    background-color: #f8fafc;
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.table-institutional tr:last-child td {
+    border-bottom: none;
 }
 
 .numeric-cell {
@@ -367,202 +588,174 @@ th.numeric-cell {
     text-align: right;
 }
 
-/* Action Buttons */
-.btn-un-primary {
-    background-color: var(--un-blue);
-    color: #ffffff;
-    border: 1px solid var(--un-blue);
-    font-weight: 600;
-    font-size: 0.88rem;
-    padding: 8px 16px;
-    border-radius: 3px;
-    transition: background-color 0.15s, border-color 0.15s;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
+/* ==========================================================================
+   Apple Form Controls & Inputs
+   ========================================================================== */
 
-.btn-un-primary:hover, .btn-un-primary:focus {
-    background-color: var(--un-blue-dark);
-    border-color: var(--un-blue-dark);
-    color: #ffffff;
-}
-
-.btn-un-secondary {
-    background-color: #ffffff;
-    color: var(--slate-dark);
-    border: 1px solid var(--border-strong);
-    font-weight: 600;
-    font-size: 0.88rem;
-    padding: 8px 16px;
-    border-radius: 3px;
-    transition: all 0.15s;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.btn-un-secondary:hover {
-    background-color: #f1f5f9;
-    border-color: var(--muted-gray);
-    color: var(--slate-dark);
-}
-
-.btn-un-outline {
-    background-color: transparent;
-    color: var(--un-blue);
-    border: 1px solid var(--un-blue);
-    font-weight: 600;
-    font-size: 0.85rem;
-    padding: 6px 14px;
-    border-radius: 3px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.btn-un-outline:hover {
-    background-color: var(--un-blue-light);
-    color: var(--un-blue-dark);
-}
-
-/* Forms */
-.form-institutional-label {
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--slate-dark);
-    margin-bottom: 6px;
-    display: block;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
+.form-control,
+.form-select,
 .form-institutional-control {
-    border: 1px solid var(--border-strong);
-    border-radius: 3px;
-    padding: 8px 12px;
-    font-size: 0.92rem;
-    color: var(--slate-dark);
-    background-color: #ffffff;
-    width: 100%;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    border: 1px solid var(--apple-outline);
+    border-radius: var(--radius-control);
+    padding: 10px 15px;
+    font-size: 14px;
+    color: var(--apple-charcoal);
+    background-color: var(--apple-white);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
+.form-control:focus,
+.form-select:focus,
 .form-institutional-control:focus {
-    border-color: var(--un-blue);
-    box-shadow: 0 0 0 2px var(--un-blue-light);
+    border-color: var(--apple-secondary);
+    box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2);
     outline: none;
 }
 
-/* Data Quality Alert Banners */
+.form-institutional-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--apple-graphite);
+    margin-bottom: 6px;
+    display: block;
+    letter-spacing: -0.01em;
+}
+
+/* Alerts / Governance notices */
 .audit-alert {
-    border-left: 4px solid var(--un-blue);
-    background-color: #ffffff;
-    border-top: 1px solid var(--border-subtle);
-    border-right: 1px solid var(--border-subtle);
-    border-bottom: 1px solid var(--border-subtle);
-    border-radius: 0 4px 4px 0;
-    padding: 14px 18px;
-    margin-bottom: 20px;
-    box-shadow: var(--shadow-subtle);
+    border: 1px solid var(--apple-outline);
+    border-left: 4px solid var(--apple-secondary);
+    background-color: var(--apple-white);
+    border-radius: var(--radius-card-sm);
+    padding: 14px 20px;
+    margin-bottom: 21px;
+    box-shadow: none;
 }
 
 .audit-alert.alert-warning {
-    border-left-color: var(--amber-warning);
-    background-color: var(--amber-light);
+    border-left-color: var(--apple-primary);
+    background-color: #FFF9F5;
 }
 
 .audit-alert.alert-info {
-    border-left-color: var(--un-blue);
-    background-color: #f0f9ff;
+    border-left-color: var(--apple-secondary);
+    background-color: #F4F9FF;
 }
 
 .audit-alert-title {
-    font-weight: 700;
-    font-size: 0.92rem;
-    color: var(--navy-primary);
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--apple-charcoal);
+    margin-bottom: 2px;
 }
 
 .audit-alert-body {
-    font-size: 0.86rem;
-    color: var(--slate-text);
+    font-size: 13px;
+    color: var(--apple-graphite);
     margin: 0;
 }
 
-/* Landing Page Hero */
+/* ==========================================================================
+   Landing Page Hero (Apple Keynote Style)
+   ========================================================================== */
+
 .hero-editorial {
-    background: linear-gradient(180deg, #0b2545 0%, #13293d 100%);
-    color: white;
-    padding: 72px 0 60px 0;
-    border-bottom: 4px solid var(--un-blue);
+    background: #1D1D1F; /* Apple Signature Charcoal Pro Background */
+    color: #FFFFFF;
+    padding: 88px 0 76px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-editorial .badge-pill-apple {
+    display: inline-block;
+    background: rgba(130, 39, 4, 0.35); /* Apple Dark Orange Translucent */
+    color: #FFA07A;
+    border: 1px solid rgba(255, 160, 122, 0.4);
+    border-radius: var(--radius-pill);
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    margin-bottom: 18px;
 }
 
 .hero-editorial h1 {
     font-family: var(--font-heading);
-    font-size: 2.8rem;
-    font-weight: 700;
-    line-height: 1.15;
-    margin-bottom: 16px;
-    color: #ffffff;
+    font-size: 56px; /* headline-display: 56px/600, -0.005em */
+    font-weight: 600;
+    line-height: 1.07;
+    letter-spacing: -0.02em;
+    margin-bottom: 18px;
+    color: #FFFFFF;
 }
 
 .hero-editorial p.lead {
-    font-size: 1.2rem;
-    color: #cbd5e1;
+    font-size: 21px; /* body-md: 21px/400 */
+    color: #D2D2D7;
     max-width: 760px;
-    line-height: 1.5;
-    margin-bottom: 28px;
+    line-height: 1.35;
+    letter-spacing: 0.01em;
+    margin-bottom: 30px;
 }
 
 .hero-stats-strip {
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 4px;
-    padding: 16px 24px;
-    margin-top: 36px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: var(--radius-card);
+    padding: 24px;
+    box-shadow: none;
 }
 
-/* Institutional Footer */
+.hero-stats-strip .h3,
+.hero-stats-strip .h4,
+.hero-stats-strip .h5 {
+    color: #FFFFFF;
+    letter-spacing: -0.02em;
+}
+
+/* ==========================================================================
+   Apple Clean Minimalist Footer
+   ========================================================================== */
+
 .footer-institutional {
-    background-color: var(--navy-primary);
-    color: #94a3b8;
-    padding: 40px 0 24px 0;
+    background-color: var(--apple-snow);
+    color: var(--apple-muted);
+    padding: 48px 0 32px 0;
     margin-top: auto;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: 0.85rem;
+    border-top: 1px solid var(--apple-outline);
+    font-size: 13px;
+    line-height: 1.5;
 }
 
 .footer-institutional h5 {
     font-family: var(--font-heading);
-    color: #ffffff;
-    font-size: 1.05rem;
+    color: var(--apple-charcoal);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
     margin-bottom: 14px;
 }
 
 .footer-institutional a {
-    color: #cbd5e1;
+    color: var(--apple-graphite);
     text-decoration: none;
-    transition: color 0.15s;
+    transition: color var(--transition-fast);
 }
 
 .footer-institutional a:hover {
-    color: #ffffff;
-    text-decoration: underline;
+    color: var(--apple-secondary);
+    text-decoration: none;
 }
 
 .footer-bottom-bar {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 20px;
-    margin-top: 30px;
-    font-size: 0.78rem;
-    color: #64748b;
+    border-top: 1px solid var(--apple-outline-subtle);
+    padding-top: 24px;
+    margin-top: 36px;
+    font-size: 12px;
+    color: var(--apple-muted);
 }
 
 /* Chart Canvas container */
@@ -572,24 +765,12 @@ th.numeric-cell {
     min-height: 280px;
 }
 
-@media (max-width: 768px) {
-    .page-title-editorial {
-        font-size: 1.6rem;
-    }
-    .hero-editorial h1 {
-        font-size: 2rem;
-    }
-    .kpi-value {
-        font-size: 1.7rem;
-    }
-}
-
 /* ==========================================================================
-   Minimalist Authentication Interface (Inspired by ChatGPT simplicity)
+   Apple-Style Authentication & Onboarding
    ========================================================================== */
 
 .auth-page-body {
-    background-color: #f8fafc;
+    background-color: var(--apple-snow);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -601,17 +782,17 @@ th.numeric-cell {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 40px 16px;
+    padding: 48px 16px;
 }
 
 .auth-card {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.03);
+    background: var(--apple-white);
+    border: 1px solid var(--apple-outline);
+    border-radius: var(--radius-card);
+    box-shadow: none;
     width: 100%;
     max-width: 440px;
-    padding: 36px 32px;
+    padding: 40px 36px;
 }
 
 .auth-card-wide {
@@ -624,16 +805,16 @@ th.numeric-cell {
 }
 
 .auth-brand-badge {
-    width: 48px;
-    height: 48px;
-    background: linear-gradient(135deg, var(--navy-primary) 0%, var(--un-blue) 100%);
-    color: #ffffff;
-    border-radius: 10px;
+    width: 52px;
+    height: 52px;
+    background: var(--apple-primary); /* Apple Dark Orange */
+    color: #FFFFFF;
+    border-radius: 14px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 16px;
-    box-shadow: 0 2px 6px rgba(0, 79, 152, 0.2);
+    box-shadow: 0 2px 6px rgba(130, 39, 4, 0.25);
 }
 
 .auth-brand-badge svg {
@@ -642,24 +823,24 @@ th.numeric-cell {
 }
 
 .auth-heading {
-    font-size: 1.55rem;
-    font-weight: 700;
-    color: var(--navy-primary);
+    font-size: 28px; /* headline-sm: 28px */
+    font-weight: 600;
+    color: var(--apple-charcoal);
     margin-bottom: 6px;
     letter-spacing: -0.015em;
 }
 
 .auth-subheading {
-    font-size: 0.88rem;
-    color: #64748b;
+    font-size: 14px;
+    color: var(--apple-muted);
     margin-bottom: 0;
-    line-height: 1.45;
+    line-height: 1.4;
 }
 
 .auth-form .form-label {
-    font-size: 0.82rem;
+    font-size: 13px;
     font-weight: 600;
-    color: #334155;
+    color: var(--apple-graphite);
     margin-bottom: 6px;
     display: flex;
     justify-content: space-between;
@@ -668,20 +849,12 @@ th.numeric-cell {
 
 .auth-form .form-control,
 .auth-form .form-select {
-    font-size: 0.92rem;
-    padding: 10px 14px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    background-color: #ffffff;
-    color: #1e293b;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.auth-form .form-control:focus,
-.auth-form .form-select:focus {
-    border-color: var(--un-blue);
-    box-shadow: 0 0 0 3px rgba(0, 79, 152, 0.12);
-    outline: none;
+    font-size: 15px;
+    padding: 11px 16px;
+    border: 1px solid var(--apple-outline);
+    border-radius: var(--radius-control);
+    background-color: var(--apple-white);
+    color: var(--apple-charcoal);
 }
 
 .auth-input-group {
@@ -697,50 +870,23 @@ th.numeric-cell {
 }
 
 .auth-toggle-pwd-btn {
-    border: 1px solid #cbd5e1;
+    border: 1px solid var(--apple-outline);
     border-left: none;
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-    background: #ffffff;
-    color: #64748b;
-    padding: 0 14px;
+    border-top-right-radius: var(--radius-control);
+    border-bottom-right-radius: var(--radius-control);
+    background: var(--apple-white);
+    color: var(--apple-muted);
+    padding: 0 16px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: color 0.15s;
+    transition: color var(--transition-fast);
 }
 
 .auth-toggle-pwd-btn:hover {
-    color: var(--navy-primary);
-    background-color: #f8fafc;
-}
-
-.auth-btn-submit {
-    width: 100%;
-    padding: 11px 16px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    background-color: var(--un-blue);
-    border: 1px solid var(--un-blue);
-    color: #ffffff;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.15s ease, transform 0.05s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.auth-btn-submit:hover {
-    background-color: var(--un-blue-dark);
-    border-color: var(--un-blue-dark);
-    color: #ffffff;
-}
-
-.auth-btn-submit:active {
-    transform: scale(0.99);
+    color: var(--apple-charcoal);
+    background-color: #FBFBFC;
 }
 
 .auth-divider {
@@ -748,8 +894,8 @@ th.numeric-cell {
     align-items: center;
     text-align: center;
     margin: 20px 0;
-    color: #94a3b8;
-    font-size: 0.78rem;
+    color: var(--apple-muted);
+    font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -759,7 +905,7 @@ th.numeric-cell {
 .auth-divider::after {
     content: '';
     flex: 1;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--apple-outline-subtle);
 }
 
 .auth-divider span {
@@ -768,159 +914,141 @@ th.numeric-cell {
 
 .auth-btn-google {
     width: 100%;
-    padding: 10px 16px;
-    font-size: 0.92rem;
+    padding: 11px 18px;
+    font-size: 14px;
     font-weight: 500;
-    background-color: #ffffff;
-    border: 1px solid #e2e8f0;
-    color: #334155;
-    border-radius: 8px;
+    background-color: var(--apple-white);
+    border: 1px solid var(--apple-outline);
+    color: var(--apple-charcoal);
+    border-radius: var(--radius-pill);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
     cursor: pointer;
-    transition: background-color 0.15s ease, border-color 0.15s ease;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast);
     text-decoration: none;
 }
 
 .auth-btn-google:hover {
-    background-color: #f8fafc;
-    border-color: #cbd5e1;
-    color: #0f172a;
+    background-color: #FBFBFC;
+    border-color: rgba(0, 0, 0, 0.25);
+    color: var(--apple-charcoal);
 }
 
 .auth-btn-demo {
     width: 100%;
-    padding: 9px 14px;
-    font-size: 0.85rem;
+    padding: 10px 18px;
+    font-size: 13px;
     font-weight: 500;
-    background-color: var(--teal-light);
-    border: 1px solid rgba(13, 148, 136, 0.25);
-    color: #0f766e;
-    border-radius: 8px;
+    background-color: #F4F9FF;
+    border: 1px solid rgba(0, 113, 227, 0.25);
+    color: var(--apple-secondary);
+    border-radius: var(--radius-pill);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: all var(--transition-fast);
     text-decoration: none;
     margin-top: 10px;
 }
 
 .auth-btn-demo:hover {
-    background-color: #ccfbf1;
-    color: #115e59;
-    border-color: rgba(13, 148, 136, 0.4);
+    background-color: #E5F2FF;
+    color: var(--apple-secondary-hover);
+    border-color: rgba(0, 113, 227, 0.4);
 }
 
 .auth-footer-prompt {
     text-align: center;
-    font-size: 0.86rem;
-    color: #64748b;
+    font-size: 13px;
+    color: var(--apple-muted);
     margin-top: 24px;
 }
 
 .auth-footer-prompt a {
-    color: var(--un-blue);
-    font-weight: 600;
+    color: var(--apple-tertiary);
+    font-weight: 500;
     text-decoration: none;
 }
 
 .auth-footer-prompt a:hover {
+    color: var(--apple-secondary-hover);
     text-decoration: underline;
 }
 
 .auth-legal-footer {
     text-align: center;
-    font-size: 0.76rem;
-    color: #94a3b8;
+    font-size: 12px;
+    color: var(--apple-muted);
     margin-top: 28px;
     line-height: 1.4;
 }
 
 .auth-legal-footer a {
-    color: #64748b;
+    color: var(--apple-graphite);
     text-decoration: underline;
-}
-
-.auth-legal-footer a:hover {
-    color: #334155;
-}
-
-/* Password strength meter */
-.pwd-strength-bar {
-    height: 4px;
-    border-radius: 2px;
-    background-color: #e2e8f0;
-    margin-top: 6px;
-    overflow: hidden;
-}
-
-.pwd-strength-fill {
-    height: 100%;
-    width: 0%;
-    transition: width 0.3s ease, background-color 0.3s ease;
-}
-
-.pwd-strength-text {
-    font-size: 0.74rem;
-    margin-top: 4px;
-    color: #64748b;
 }
 
 /* User Profile & Account Settings Section */
 .profile-card {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    padding: 28px;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    background: var(--apple-white);
+    border: 1px solid var(--apple-outline);
+    border-radius: var(--radius-card);
+    padding: 32px 28px;
+    box-shadow: none;
 }
 
 .profile-avatar-circle {
     width: 72px;
     height: 72px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--navy-primary) 0%, var(--teal-accent) 100%);
-    color: #ffffff;
+    background: var(--apple-primary); /* Apple Dark Orange */
+    color: #FFFFFF;
     font-size: 1.8rem;
-    font-weight: 700;
+    font-weight: 600;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 10px rgba(11, 37, 69, 0.15);
-}
-
-/* User Navbar Dropdown Styles */
-.user-nav-dropdown .dropdown-toggle::after {
-    margin-left: 0.4em;
-    vertical-align: 0.15em;
 }
 
 .user-badge-nav {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 4px 12px;
-    border-radius: 20px;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
-    font-size: 0.88rem;
+    padding: 5px 14px;
+    border-radius: var(--radius-pill);
+    background-color: rgba(0, 0, 0, 0.05);
+    color: var(--apple-charcoal);
+    font-size: 14px;
     font-weight: 500;
 }
 
 .user-initial-icon {
-    width: 26px;
-    height: 26px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
-    background-color: var(--teal-accent);
-    color: #ffffff;
+    background-color: var(--apple-primary);
+    color: #FFFFFF;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.76rem;
+    font-size: 11px;
     font-weight: 700;
 }
 
+/* Media Queries for Apple Mobile responsiveness */
+@media (max-width: 768px) {
+    .hero-editorial h1 {
+        font-size: 32px; /* headline-display-mobile: 32px */
+        line-height: 1.13;
+    }
+    .page-title-editorial {
+        font-size: 28px;
+    }
+    .kpi-value {
+        font-size: 28px;
+    }
+}

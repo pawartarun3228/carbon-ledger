@@ -60,9 +60,9 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(result => {
                 if (!result.labels || result.labels.length === 0) return;
                 
-                const institutionalPalette = [
-                    '#004f98', '#0d9488', '#0b2545', '#d97706', 
-                    '#475569', '#2563eb', '#15803d', '#dc2626'
+                const applePalette = [
+                    '#0071E3', '#822704', '#34C759', '#FF9500', 
+                    '#AF52DE', '#30B0C7', '#5856D6', '#FF2D55'
                 ];
 
                 new Chart(categoryChartElem.getContext('2d'), {
@@ -71,9 +71,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         labels: result.labels.map(l => l.replace(/_/g, ' ').toUpperCase()),
                         datasets: [{
                             data: result.data,
-                            backgroundColor: institutionalPalette.slice(0, result.labels.length),
-                            borderWidth: 1,
-                            borderColor: '#ffffff'
+                            backgroundColor: applePalette.slice(0, result.labels.length),
+                            borderWidth: 2,
+                            borderColor: '#FFFFFF'
                         }]
                     },
                     options: {
@@ -83,9 +83,9 @@ document.addEventListener('DOMContentLoaded', function () {
                             legend: {
                                 position: 'right',
                                 labels: {
-                                    font: { family: "'Inter', sans-serif", size: 11 },
+                                    font: { family: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif", size: 12 },
                                     boxWidth: 12,
-                                    padding: 12
+                                    padding: 14
                                 }
                             },
                             tooltip: {
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 }
                             }
                         },
-                        cutout: '62%'
+                        cutout: '66%'
                     }
                 });
             });
@@ -117,13 +117,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         datasets: [{
                             label: 'Emissions (kg CO2e)',
                             data: result.data,
-                            borderColor: '#004f98',
-                            backgroundColor: 'rgba(0, 79, 152, 0.08)',
+                            borderColor: '#0071E3',
+                            backgroundColor: 'rgba(0, 113, 227, 0.08)',
                             fill: true,
-                            tension: 0.15,
-                            pointBackgroundColor: '#004f98',
-                            pointBorderColor: '#ffffff',
-                            pointBorderWidth: 1.5,
+                            tension: 0.25,
+                            pointBackgroundColor: '#0071E3',
+                            pointBorderColor: '#FFFFFF',
+                            pointBorderWidth: 2,
                             pointRadius: 4,
                             pointHoverRadius: 6
                         }]
@@ -134,15 +134,15 @@ document.addEventListener('DOMContentLoaded', function () {
                         scales: {
                             y: {
                                 beginAtZero: true,
-                                grid: { color: '#f1f5f9' },
+                                grid: { color: 'rgba(0, 0, 0, 0.05)' },
                                 ticks: {
-                                    font: { family: "'Inter', sans-serif", size: 10 },
+                                    font: { family: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif", size: 11 },
                                     callback: function (val) { return val.toLocaleString() + ' kg'; }
                                 }
                             },
                             x: {
                                 grid: { display: false },
-                                ticks: { font: { family: "'Inter', sans-serif", size: 10 } }
+                                ticks: { font: { family: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif", size: 11 } }
                             }
                         },
                         plugins: {
